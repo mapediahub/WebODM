@@ -112,7 +112,7 @@ section.examples-new p {
   header img.header-img {
     position: absolute;
     top: 120px;
-    left: 42%;
+    left: 50%;
     width: auto;
     display: block;
     max-height: 640px;
