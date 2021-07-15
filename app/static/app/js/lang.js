@@ -17,7 +17,7 @@ var messages = {
         "Select images captured by a drone (with optional Ground Control Point file for increased precision)",
       howIt2_title: "2. Image processing",
       howIt2_desc: "Wait for Dronebox to process the images in the cloud",
-      howIt3_title: "3. Analyse results",
+      howIt3_title: "3. Analyze results",
       howIt3_desc:
         "View your images stitched together on a 2D map or visualize the 3D point cloud",
       feature_header: "Features",
@@ -40,7 +40,7 @@ var messages = {
         "A recommendation for flying your drone to meet an ultimate map solution",
       exam_header: "Example",
       exam_desc:
-        "An example of a drone mapping dataset that displays an Orthophoto, Plant Health, Serface Model and a 3D Models.",
+        "An example of a drone mapping dataset that displays an Orthophoto, Plant Health, Surface Model and a 3D Models.",
       exam_btn: "Explore Example",
       price_header: "Pricing",
       price1_title: "Starter Plan",
