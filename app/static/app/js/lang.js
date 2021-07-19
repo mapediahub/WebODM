@@ -9,7 +9,7 @@ var messages = {
     page_main: {
       header_title: "Cloud-based image platform for drone pilots",
       header_desc:
-        "Dronebox is helps beginner and expert pilots manage, combine and share map-based drone photography quickly and easily.",
+        "Dronebox helps beginner and expert pilots manage, combine and share map-based drone photography quickly and easily.",
       tryIt_btn: "Try it for free",
       howIt_header: "How it works",
       howIt1_title: "1. Upload images",
@@ -26,7 +26,7 @@ var messages = {
         "Stitched photos, orthorectified and georeferenced to make an accurate map.",
       feature2_title: "Elevation Models",
       feature2_desc:
-        "Digital Elevation Model (DEM) is the digital representation of the land surface elevation with respect to any reference datum. Which consists of Digital Surface Model (DSM) and Digital Terrain Model (DTM)",
+        "Digital Elevation Model (DEM) is the digital representation of the land surface elevation which consists of Digital Surface Model (DSM) and Digital Terrain Model (DTM).",
       feature3_title: "GIS Compatible",
       feature3_desc:
         "Support GIS capabilities to enable further analysis in GIS software.",
@@ -55,12 +55,12 @@ var messages = {
     page_about: {
       header_title: "About us",
       header_desc: "An easy-to-use platform to process Drone image",
-      content1_title: "Who we are",
+      content1_title: "Dronebox",
       content1_desc:
         "Dronebox is a platform shaped upon OpenDroneMap (ODM), which is an open source toolkit for processing drone imagery. The ultimate goal of Dronebox is to enable wide-range of users from novices to experts to make an accurate map from Drone imagery with ease. Moreover, Dronebox provides a guideline on flying Drone for collecting aerial photos with suitable resolutions to meet tasks’ requirements.",
-      content2_title: "Dronebox",
+      content2_title: "Who we are",
       content2_desc:
-        "Dronebox is a collaborative research project co-funded by Northern Science Park under the Industrial Research and Technology Capacity Development Program (IRTC) and Mapedia Co., Ltd. The project was conducted by Assistant Professor Dr.Duangduen Asavasuthirakul and Dr.Antony Harfield from Department of Computer Science and Information Technology, Faculty of Science, Naresuan University. This research project aims to reinforce cloud knowledge and development skill to entrepreneur to develop competitive cloud-base product to the market.",
+        "Dronebox is a collaborative research project co-funded by Northern Science Park under the Industrial Research and Technology Capacity Development Program (IRTC) and Mapedia Co., Ltd. <br/>The project was conducted by Assistant Professor Dr.Duangduen Asavasuthirakul and Dr.Antony Harfield from Department of Computer Science and Information Technology, Faculty of Science, Naresuan University. This research project aims to reinforce cloud knowledge and development skill to entrepreneur to develop competitive cloud-base product to the market.",
       partner_header: "Supported",
       partner1_title: "Northern Science Park",
       partner1_desc:
@@ -85,37 +85,37 @@ var messages = {
     goto_dashboard: "แดชบอร์ด",
 
     page_main: {
-      header_title: "แพลตฟอร์มที่ใช้งานง่ายสำหรับการทำแผนที่ภาพถ่ายทางอากาศด้วยโดรน (Drone)",
+      header_title: "คลาวด์แพลตฟอร์มสำหรับประมวลผลภาพโดรน",
       header_desc:
-        "เราช่วยให้บุคคลทั่วไปจนถึงผู้เชี่ยวชาญ และบริษัทต่างๆ ได้รับประสบการณ์ที่ดีในการทำแผนที่ภาพถ่ายด้วยโดรน และให้คำแนะนำเกี่ยวกับการบินโดรน เพื่อนำไปใช้ในงานต่างๆ ที่เกี่ยวกับแผนที่ได้อย่างมีประสิทธิภาพมากที่สุด ",
+        "Dronebox ช่วยเพิ่มประสิทธิภาพการประมวลผลภาพโดรนให้ทั้งมือใหม่จนผู้เชี่ยวชาญสามารถจัดการต่อภาพ และแบ่งปันภาพโดรนได้อย่างง่ายและรวดเร็ว",
       tryIt_btn: "ทดลองใช้งานฟรี",
       howIt_header: "การทำงาน",
-      howIt1_title: "อัพโหลดรูปภาพ",
+      howIt1_title: "อัปโหลดรูปภาพ",
       howIt1_desc:
-        "เลือกอัพโหลดรูปถ่ายที่ได้จากโดรน หรือไฟล์ GCP (จุดควบคุมภาพถ่าย)",
-      howIt2_title: "การประมวลผลข้อมูล",
-      howIt2_desc: "ระบบจะทำการประมวลผลข้อมูลผ่านระบบคลาวด์",
-      howIt3_title: "ผลลัพธ์ระดับมืออาชีพ",
+        "เลือกอัปโหลดรูปถ่ายที่ได้จากโดรน (และไฟล์ GCP (จุดควบคุมภาพถ่าย) เพื่อเพื่มความถูกต้องให้กับภาพ)",
+      howIt2_title: "ประมวลผลรูปภาพ",
+      howIt2_desc: "รอให้ Dronebox ประมวลผลรูปภาพบนคลาวด์",
+      howIt3_title: "วิเคราะห์ผล",
       howIt3_desc:
-        "ผลลัพธ์และคุณภาพที่ได้จากการประมวลผลทำได้ดีเช่นเดียวกับผู้ให้บริการเชิงพาณิชย์อื่น ๆ",
+        "ดูผลการต่อเชื่อมภาพบนแผนที่แบบ 2D และ point cloud แบบ 3D",
       feature_header: "คุณสมบัติ",
       feature1_title: "แผนที่ภาพถ่ายทางอากาศ",
       feature1_desc:
-        "ภาพถ่ายที่ผ่านกระบวนการดัดแก้ให้มีความถูกต้องทางตำแหน่ง ออกมาเป็นแผนที่ภาพถ่ายทางอากาศที่มีความถูกต้องสูง",
+        "ภาพถ่ายที่ผ่านกระบวนการต่อภาพและดัดแก้เชิงตำแหน่ง ได้เป็นแผนที่ภาพถ่ายทางอากาศที่มีความถูกต้องสูง",
       feature2_title: "แบบจำลองระดับสูง",
       feature2_desc:
-        "Digital Elevation Model (DEM) คือแบบจำลองระดับความสูง ซึ่งประกอบด้วย แบบจำลองระดับความสูงของพื้นผิว (DSM) และแบบจำลองระดับความสูงภูมิประเทศ (DTM)",
+        "แบบจำลองระดับความสูง (DEM) ซึ่งประกอบด้วย แบบจำลองระดับความสูงของพื้นผิว (DSM) และแบบจำลองระดับความสูงภูมิประเทศ (DTM)",
       feature3_title: "รองรับการทำงาน GIS",
       feature3_desc:
-        "ไฟล์ผลลัพธ์ที่ได้จากการประมวลผล สามารถเปิดใช้งานร่วมกับการวิเคราะห์เพิ่มเติมในซอฟต์แวร์ GIS ได้",
+        "ไฟล์ผลลัพธ์ สามารถใช้งานร่วมกับโปรแกรม GIS เพื่อวิเคราะห์เพิ่มเติมได้",
       feature4_title: "โมเดล 3 มิติ",
       feature4_desc:
         "แบบจำลอง 3 มิติ และข้อมูล Point cloud ที่สร้างขึ้นอย่างอัตโนมัติ",
       feature5_title: "การวัด",
-      feature5_desc: "วัดระยะทาง พื้นที่ และระดับบนแผนที่ด้วยการควบคุม 2 มิติ และ 3 มิติ",
+      feature5_desc: "วัดระยะทาง พื้นที่ และปริมาตรบนแผนที่ด้วยแผงควบคุม 2 มิติ และ 3 มิติ",
       feature6_title: "คำแนะนำการบินโดรน",
       feature6_desc:
-        "คำแนะนำสำหรับการบินโดรนของคุณเพื่อให้ได้แผนที่ที่ดีที่สุด",
+        "คำแนะนำสำหรับการบินโดรนเพื่อให้ได้แผนที่ที่ดีที่สุดสำหรับคุณ",
       exam_header: "ตัวอย่างแผนที่",
       exam_desc:
         "ตัวอย่างชุดข้อมูลของการทำ Drone mapping ที่แสดงผลเป็น Orthophoto, Plant Health, Surface Model และแผนที่รูปแบบ 3 มิติ",
@@ -124,21 +124,21 @@ var messages = {
       price1_title: "แพคเกจเริ่มต้น",
       price1_value: "ทดลองใช้งานฟรี",
       price1_desc:
-        "- ไม่จำกัดการสร้างโปรเจ็ค <br/>- อัพโหลดภาพไม่เกิน 300 ภาพ/โปรเจ็ค <br/>- รองรับไฟล์ Ground Control Point (GCP) <br/>- ไม่จำกัด Task ในการประมวลผล (shared server) <br/>- สามารถดาวน์โหลดข้อมูลเพื่อใช้ร่วมกับโปรแกรมด้าน GIS ได้",
+        "- ไม่จำกัดการสร้างโปรเจ็ค <br/>- อัปโหลดภาพไม่เกิน 300 ภาพ/โปรเจ็ค <br/>- รองรับไฟล์ Ground Control Point (GCP) <br/>- ไม่จำกัด Task ในการประมวลผล (shared server) <br/>- สามารถดาวน์โหลดข้อมูลเพื่อใช้ร่วมกับโปรแกรมด้าน GIS ได้",
       price2_title: "แพคเกจสำหรับมืออาชีพ",
       price2_value: "ติดต่อเรา",
       price2_desc:
-        "- ไม่จำกัดการสร้างโปรเจ็ค <br/>- ไม่จำกัดการอัพโหลดภาพ <br/>- รองรับไฟล์ Ground Control Point (GCP) <br/>- ไม่จำกัด Task ในการประมวลผล<br/>- สามารถปรับขนาดของระบบประมวลผลได้บนคลาวด์ <br/>- ไม่มีการแชร์ทรัพยากรร่วมกับคนอื่น <br/>- ข้อมูลและการประมวลผลเป็นแบบส่วนตัว <br/>- สามารถดาวน์โหลดข้อมูลเพื่อใช้ร่วมกับโปรแกรมด้าน GIS ได้ <br/>- รองรับการเข้าถึง API",
+        "- ไม่จำกัดการสร้างโปรเจ็ค <br/>- ไม่จำกัดการอัปโหลดภาพ <br/>- รองรับไฟล์ Ground Control Point (GCP) <br/>- ไม่จำกัด Task ในการประมวลผล<br/>- สามารถปรับขนาดของระบบประมวลผลได้บนคลาวด์ <br/>- ไม่มีการแชร์ทรัพยากรร่วมกับผู้อื่น <br/>- ข้อมูลและการประมวลผลเป็นแบบส่วนตัว <br/>- สามารถดาวน์โหลดข้อมูลเพื่อใช้ร่วมกับโปรแกรมด้าน GIS ได้ <br/>- รองรับการเข้าถึง API",
     },
     page_about: {
       header_title: "เกี่ยวกับ",
       header_desc: "แพลตฟอร์มที่ใช้งานง่ายในการประมวลผลภาพโดรน",
-      content1_title: "พวกเราคือใคร",
+      content1_title: "Dronebox",
       content1_desc:
         "Dronebox เป็นแพลตฟอร์มที่สร้างขึ้นจาก OpenDroneMap (ODM) ซึ่งเป็นชุดเครื่องมือโอเพนซอร์สสำหรับการประมวลผลภาพโดรน เป้าหมายสูงสุดของ Dronebox คือการให้ผู้ใช้ที่หลากหลายตั้งแต่มือใหม่จนถึงผู้เชี่ยวชาญ สามารถสร้างแผนที่ที่แม่นยำจากภาพ Drone ได้อย่างง่ายดาย นอกจากนี้ Dronebox ยังให้แนวทางเกี่ยวกับการบิน Drone สำหรับการรวบรวมภาพถ่ายทางอากาศด้วยความละเอียดที่เหมาะสมเพื่อตอบสนองความต้องการของงาน",
-      content2_title: "Dronebox",
+      content2_title: "พวกเราคือใคร",
       content2_desc:
-        "Dronebox เป็นโครงการวิจัยร่วมกันที่ได้รับทุนสนับสนุนจาก Northern Science Park ภายใต้โครงการ Industrial Research and Technology Capacity Development (IRTC) และ Mapedia Co., Ltd. ซึ่งดำเนินโครงการโดย ผู้ช่วยศาสตราจารย์ ดร.ดวงเดือน อัศวสุทธิกุล และ ดร.แอนโทนี ฮาร์ฟิลด์ จากภาควิชา วิทยาการคอมพิวเตอร์และเทคโนโลยีสารสนเทศ คณะวิทยาศาสตร์ มหาวิทยาลัยนเรศวร. โครงการวิจัยนี้มีจุดมุ่งหมายเพื่อเสริมสร้างความรู้และทักษะด้านการพัฒนาระบบคลาวด์ให้กับผู้ประกอบการเพื่อพัฒนาผลิตภัณฑ์ฐานคลาวด์ที่แข่งขันได้ออกสู่ตลาด",
+        "Dronebox เป็นโครงการวิจัยร่วมกันที่ได้รับทุนสนับสนุนจาก Northern Science Park ภายใต้โครงการ Industrial Research and Technology Capacity Development (IRTC) และ Mapedia Co., Ltd. ซึ่งดำเนินโครงการโดย ผู้ช่วยศาสตราจารย์ ดร.ดวงเดือน อัศวสุธีรกุล และ ดร.แอนโทนี ฮาร์ฟิลด์ จากภาควิชา วิทยาการคอมพิวเตอร์และเทคโนโลยีสารสนเทศ คณะวิทยาศาสตร์ มหาวิทยาลัยนเรศวร โครงการวิจัยนี้มีจุดมุ่งหมายเพื่อเสริมสร้างความรู้และทักษะด้านการพัฒนาระบบคลาวด์ให้กับผู้ประกอบการเพื่อพัฒนาผลิตภัณฑ์ฐานคลาวด์ที่แข่งขันได้ออกสู่ตลาด",
       partner_header: "สนับสนุนโดย",
       partner1_title: "อุทยานวิทยาศาสตร์ภาคเหนือ",
       partner1_desc:
