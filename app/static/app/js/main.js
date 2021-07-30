@@ -65,7 +65,7 @@ $(function () {
             value: this.$t("page_main.price1_value"),
             desc: this.$t("page_main.price1_desc"),
             btn: this.$t("page_main.tryIt_btn"),
-            link:"http://dronebox.io/public/task/f989cbe1-86b3-46c5-8165-c000dd08a721/map/"
+            link:"/register"
           },
           {
             title: this.$t("page_main.price2_title"),
