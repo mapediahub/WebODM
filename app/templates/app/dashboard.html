@@ -1,5 +1,5 @@
 {% extends "app/logged_in_base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block content %}
 {% load render_bundle from webpack_loader %}
@@ -14,7 +14,7 @@
 	<div class="welcome ">
 		<div class="row bg-welcome">
 			<div id="order-first" class="col-lg-4 col-md-6">
-				<img src="{% static 'app/img/landing/img-welcome.png %}" class="img-fluid" alt="">
+				<img src="{% static 'app/img/landing/img-welcome.png' %}" class="img-fluid" alt="">
 				<div class="button-exam">
 					<a href="http://dronebox.io/public/task/f989cbe1-86b3-46c5-8165-c000dd08a721/map/" target="_blank">
 						<button class="btn primary rounded outlined small db-btn">
@@ -55,7 +55,7 @@
 	{% if no_tasks %}
 	<div class="row dashboard-default">
 		<div class="col-lg-12 text-center">
-			<img src="{% static 'app/img/landing/img-no-project.svg %}">
+			<img src="{% static 'app/img/landing/img-no-project.svg' %}">
 			<p class="no-project">{% trans 'No project' %}</p>
 			<p>{% trans 'Add project for getting started' %}</p>
 		</div>
