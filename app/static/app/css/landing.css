@@ -151,8 +151,7 @@ section.examples-new p {
     display: none;
   }
   .button-exam{
-    display: flex;
-    justify-content: left;
+    justify-content: left !important;
   }
 }
 
@@ -167,8 +166,7 @@ section#features .feature .icon {
 /*-------- dashboard -------- */
 
 .welcome {
-  margin-top: 100px;
-  margin-bottom: 1rem;
+  margin: 1rem 0rem;
 }
 .welcome h3 {
   color: #00786d;
@@ -183,22 +181,13 @@ section#features .feature .icon {
 }
 .howto-link{
   padding-bottom: 8px;
+  font-size: 14px;
 }
 .howto-link a:focus,
 a:hover {
-  color: #78b0ff;
   text-decoration: none;
 }
 .button-exam{
   display: flex;
   justify-content: center;
-}
-.dashboard-default img{
-  max-width: 200px;
-  font-size: 14px;
-}
-.noProject{
-  color: #D1D3D4;
-  margin-top: 8px;
-  margin-bottom: -2px;
 }
