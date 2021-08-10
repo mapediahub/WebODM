@@ -1,8 +1,7 @@
 import React from 'react';
-import ErrorMessage from './ErrorMessage';
 import FormDialog from './FormDialog';
 import PropTypes from 'prop-types';
-import $ from 'jquery';
+import { _ } from '../classes/gettext';
 
 class EditProjectDialog extends React.Component {
     static defaultProps = {
@@ -84,7 +83,7 @@ class EditProjectDialog extends React.Component {
                 onShow={this.onShow}
                 ref={(domNode) => { this.dialog = domNode; }}>
               <div className="form-group">
-                <label className="control-label" htmlFor={`form-${formId}-project-name-input`}>Name</label>
+                <label className="control-label" htmlFor={`form-${formId}-project-name-input`}>{_("Name")}</label>
                 <input
                     id={`form-${formId}-project-name-input`}
                     type="text"
@@ -95,7 +94,7 @@ class EditProjectDialog extends React.Component {
                     onChange={this.handleChange('name')} />
               </div>
               <div className="form-group">
-                <label className="control-label" htmlFor={`form-${formId}-project-desc-input`}>Description&nbsp;<small>(Optional)</small></label>
+                <label className="control-label" htmlFor={`form-${formId}-project-desc-input`}>{_("Description (optional)")}</label>
                 <textarea
                   id={`form-${formId}-project-desc-input`}
                   className="form-control db-input none-resize"

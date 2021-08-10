@@ -8,7 +8,7 @@ import {
   Route
 } from "react-router-dom"
 import $ from "jquery"
-
+import { _ } from './classes/gettext';
 
 class Dashboard extends React.Component {
 
@@ -83,7 +83,7 @@ class Dashboard extends React.Component {
 					</div>
 					<div className="action-container">
 						<button className="btn primary rounded outlined db-btn" onClick={() => this.handleAddProject()}>
-							<span className="btn-label">Add Project</span>
+							<span className="btn-label">{_("Add Project")}</span>
 						</button>
 					</div>
 				</div>

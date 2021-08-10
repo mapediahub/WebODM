@@ -98,3 +98,4 @@ package-lock.json
 .cronenv
 .initialized
 celerybeat-schedule.db
+.DS_Store

@@ -3,6 +3,7 @@ import ErrorMessage from './ErrorMessage';
 import '../css/FormDialog.scss';
 import PropTypes from 'prop-types';
 import $ from 'jquery';
+import { _ } from '../classes/gettext';
 
 class FormDialog extends React.Component {
     static defaultProps = {
@@ -147,7 +148,7 @@ class FormDialog extends React.Component {
                   </div>
                   <div className="modal-footer">
                     <div className="pull-right">
-                        <button type="button" className="btn btn-outline-secondary db-btn rounded  mr-2" onClick={this.hide} disabled={this.state.saving}>Cancel</button>
+                        <button type="button" className="btn btn-outline-secondary db-btn rounded  mr-2" onClick={this.hide} disabled={this.state.saving}>{_("Cancel")}</button>
                         <button type="button" className="btn rounded db-btn primary save" onClick={this.handleSave} disabled={this.state.saving}>
                             {this.state.saving ? 
                                 <span>
@@ -166,10 +167,10 @@ class FormDialog extends React.Component {
                                 onClick={this.handleDelete}>
                                 {this.state.deleting ? 
                                     <span>
-                                        <i className="fa fa-circle-notch fa-spin"></i> Deleting...
+                                        <i className="fa fa-circle-notch fa-spin"></i> {_("Deleting...")}
                                     </span>
                                 :   <span>
-                                        <i className="glyphicon glyphicon-trash"></i> Delete
+                                        <i className="glyphicon glyphicon-trash"></i> {_("Delete")}
                                     </span>}
                             </button>
                         </div>

@@ -6,6 +6,7 @@ import Storage from '../classes/Storage';
 import ResizeModes from '../classes/ResizeModes';
 import update from 'immutability-helper';
 import PluginsAPI from '../classes/plugins/API';
+import { _, interpolate } from '../classes/gettext';
 
 class NewTaskPanel extends React.Component {
   static defaultProps = {
@@ -19,7 +20,7 @@ class NewTaskPanel extends React.Component {
       filesCount: PropTypes.number,
       showResize: PropTypes.bool,
       getFiles: PropTypes.func,
-      suggestedTaskName: PropTypes.string,
+      suggestedTaskName: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
   };
 
   constructor(props){
@@ -79,7 +80,7 @@ class NewTaskPanel extends React.Component {
       this.setState({inReview: false});
     }else{
       if (this.props.onCancel){
-        if (window.confirm("Are you sure you want to cancel?")){
+        if (window.confirm(_("Are you sure you want to cancel?"))){
           this.props.onCancel();
         }
       }
@@ -127,7 +128,7 @@ class NewTaskPanel extends React.Component {
       <div className="new-task-panel theme-background-highlight col-12">
         <div className="form-horizontal">
           <div className={this.state.inReview ? "disabled" : ""}>
-            <p>{this.props.filesCount} files selected. Please check these additional options:</p>
+            <p>{interpolate(_("%(count)s files selected. Please check these additional options:"), { count: this.props.filesCount})}</p>
             <EditTaskForm
               selectedNode={Storage.getItem("last_processing_node") || "auto"}
               onFormLoaded={this.handleFormTaskLoaded}
@@ -140,7 +141,7 @@ class NewTaskPanel extends React.Component {
             {this.state.editTaskFormLoaded && this.props.showResize ?
               <div>
                 <div className="form-group row">
-                  <label className="control-label col-2">Resize Images</label>
+                  <label className="control-label col-2">{_("Resize Images")}</label>
                   <div className="col-10">
                       <div className="btn-group">
                         <button type="button" className="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
@@ -162,7 +163,7 @@ class NewTaskPanel extends React.Component {
                           onChange={this.handleResizeSizeChange} 
                           value={this.state.resizeSize} 
                       />
-                      <span className="pl-2">px</span>
+                      <span className="pl-2">{_("px")}</span>
                       </div>
                   </div>
                 </div>
@@ -180,11 +181,11 @@ class NewTaskPanel extends React.Component {
             <div className="form-group">
               <hr/>
               <div className="d-flex justify-content-end">
-                {this.props.onCancel !== undefined && <button type="submit" className="btn btn-danger" onClick={this.cancel} style={{marginRight: 4}}><i className="glyphicon glyphicon-remove-circle"></i> Cancel</button>}
+                {this.props.onCancel !== undefined && <button type="submit" className="btn btn-danger" onClick={this.cancel} style={{marginRight: 4}}><i className="glyphicon glyphicon-remove-circle"></i> {_("Cancel")}</button>}
                 {this.state.loading ?
-                  <button type="submit" className="btn btn-primary" disabled={true}><i className="fa fa-circle-notch fa-spin fa-fw"></i>Loading...</button>
+                  <button type="submit" className="btn btn-primary" disabled={true}><i className="fa fa-circle-notch fa-spin fa-fw"></i>{_("Loading…")}</button>
                   :
-                  <button type="submit" className="btn btn-primary" onClick={this.save} disabled={this.props.filesCount <= 1}><i className="glyphicon glyphicon-saved"></i> {!this.state.inReview ? "Review" : "Start Processing"}</button>
+                  <button type="submit" className="btn btn-primary" onClick={this.save} disabled={this.props.filesCount <= 1}><i className="glyphicon glyphicon-saved"></i> {!this.state.inReview ? _("Review") : _("Start Processing")}</button>
                 }
               </div>
             </div>
