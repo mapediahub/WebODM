@@ -1,5 +1,5 @@
 {% extends "app/logged_in_base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block content %}
 {% load render_bundle from webpack_loader %}
@@ -11,22 +11,47 @@
 <![endif]-->
 <div class="container">
 	{% if no_tasks %}
-	<h3>{% trans 'Welcome!' %}</h3>
-	{% trans 'Select Images and GCP' as upload_images %}
-	<p>
-		{% blocktrans %} To create a map, press the "{{ upload_images }}" button, or drag and drop some images into a
-		project. {% endblocktrans %}
-	</p>
-	<p>
-	<ul>
-		<li>{% trans 'You need at least 5 images' %}</li>
-		<li>{% trans 'Images must overlap by 65% or more' %}</li>
-		<li>{% trans 'For great 3D, images must overlap by 83%' %}</li>
-		<li>{% trans 'A GCP file is optional, but can increase georeferencing accuracy' %}</li>
-	</ul>
-	</p>
+	<div class="welcome ">
+		<div class="row bg-welcome">
+			<div id="order-first" class="col-lg-4 col-md-6">
+				<img src="{% static 'app/img/landing/img-welcome.png' %}" class="img-fluid" alt="">
+				<div class="button-exam">
+					<a href="http://dronebox.io/public/task/f989cbe1-86b3-46c5-8165-c000dd08a721/map/" target="_blank">
+						<button class="btn primary rounded outlined small db-btn">
+							<span class="btn-label">{% trans 'Explore Example' %}</span>
+						</button>
+					</a>
+				</div>
+			</div>
+			<div id="order-second" class="col-lg-8 col-md-6">
+				<h3>
+					{% trans 'Getting started with Dronebox' %}
+				</h3>
+				<div class="howto-link">
+					<a href="https://www.youtube.com/channel/UClQLRr9fD5Aw-lQzfkHMSeQ" target="_blank">
+						<i class="fas fa-video mr-2"></i>
+						<span>{% trans 'Go watch to video for getting started.' %}</span>
+					</a>
+				</div>
+				{% trans 'Select Images and GCP' as upload_images %}
+				<span>
+					{% blocktrans %} To create a map, press the "{{ upload_images }}" button, or drag and drop some
+					images into a
+					project. {% endblocktrans %}
+				</span>
+				<ul>
+					<li>{% trans 'You need at least 5 images' %}</li>
+					<li>{% trans 'Images must overlap by 65% or more' %}</li>
+					<li>{% trans 'For great 3D, images must overlap by 83%' %}</li>
+					<li>{% trans 'A GCP file is optional, but can increase georeferencing accuracy' %}</li>
+				</ul>
+			</div>
+		</div>
+	</div>
 	{% endif %}
 
 	<div id="dashboard-app" data-dashboard></div>
+
+	
 </div>
 {% endblock %}

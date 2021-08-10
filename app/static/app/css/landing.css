@@ -141,6 +141,18 @@ section.examples-new p {
   .step-card-horizontal {
     display: block;
   }
+  #order-first {
+    order: 2;
+  }
+  #order-second {
+    order: 1;
+  }
+  .welcome img {
+    display: none;
+  }
+  .button-exam{
+    justify-content: left !important;
+  }
 }
 
 section#features {
@@ -149,4 +161,33 @@ section#features {
 
 section#features .feature .icon {
   background-color: white !important;
+}
+
+/*-------- dashboard -------- */
+
+.welcome {
+  margin: 1rem 0rem;
+}
+.welcome h3 {
+  color: #00786d;
+  margin-bottom: 1rem;
+  font-size: 36px;
+  font-weight: 400;
+}
+.bg-welcome {
+  background-color: #f0f6f7;
+  border-radius: 16px;
+  padding: 30px;
+}
+.howto-link{
+  padding-bottom: 8px;
+  font-size: 14px;
+}
+.howto-link a:focus,
+a:hover {
+  text-decoration: none;
+}
+.button-exam{
+  display: flex;
+  justify-content: center;
 }
