@@ -180,6 +180,9 @@ class PluginBase(ABC):
         """
         return []
 
+    def admin_menu(self):
+        return []
+
     def root_mount_points(self):
         """
         Should be overriden by plugins that want to 

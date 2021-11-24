@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from django.views.i18n import JavaScriptCatalog
 
-from .views import app as app_views, public as public_views, dev as dev_views
+from .views import app as app_views, public as public_views, dev as dev_views, register as register_views
 from .plugins.views import app_view_handler, root_url_patterns
 
 from app.boot import boot
