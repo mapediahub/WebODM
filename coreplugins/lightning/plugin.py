@@ -21,8 +21,6 @@ def JsonResponse(dict):
     return HttpResponse(json.dumps(dict), content_type='application/json')
 
 class Plugin(PluginBase):
-    def main_menu(self):
-        return [Menu(_("Lightning Network"), self.public_url(""), "fa fa-bolt fa-fw")]
 
     def include_js_files(self):
         return ['add_cost_estimate.js']
