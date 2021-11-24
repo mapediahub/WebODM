@@ -675,15 +675,17 @@ class ModelView extends React.Component {
 $(function(){
     // Use gettext for translations
     const oldInit = i18n.init;
-    i18n.addPostProcessor("gettext", function(v, k, opts){
-        if (v){
+
+    typeof i18n.addPostProcessor === "function" && i18n.addPostProcessor("gettext", function(v, k, opts){
+        if (v) {
             return _(v);
-        }else return v;
+        }
+        return v;
     });
     i18n.init = function(opts, cb){
         opts.preload = ['en'];
         opts.postProcess = "gettext";
-        oldInit(opts, cb);
+        typeof oldInit === "function" && oldInit(opts, cb);
     };
 
     $("[data-modelview]").each(function(){
