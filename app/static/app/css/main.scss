@@ -392,19 +392,20 @@ section.examples .examples-content h2 {
 }
 
 footer {
-    padding: 50px 0px 0px;
-    font-size: 14px;
-    text-align: center;
-    color: white;
-    background-image: linear-gradient(123deg, rgba(0, 150, 136, 0.85) -26%, #103475 99%);
+    height: auto !important;
+    padding: 50px 0px 0px !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    color: white !important;
+    background-image: linear-gradient(123deg, rgba(0, 150, 136, 0.85) -26%, #103475 99%) !important;
 
     h5 {
-        font-weight: 400;
-        margin: 0px;
+        font-weight: 400 !important;
+        margin: 0px !important;
     }
 
     a, a:hover, a:focus {
-        color: white;
+        color: white !important;
     }
 }
 
