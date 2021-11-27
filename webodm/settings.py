@@ -50,9 +50,8 @@ WORKER_RUNNING = sys.argv[2:3] == ["worker"]
 
 # SECURITY WARNING: don't run with debug turned on a public facing server!
 DEBUG = os.environ.get('WO_DEBUG', 'YES') == 'YES' or TESTING
-DEV = os.environ.get('WO_DEV', 'NO') == 'YES'
-SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = os.environ.get('WO_SSL',
-                                                            'NO') == 'YES'
+DEV = os.environ.get('WO_DEV', 'NO') == 'YES' and not TESTING
+SESSION_COOKIE_SECURE = CSRF_COOKIE_SECURE = os.environ.get('WO_SSL', 'NO') == 'YES'
 INTERNAL_IPS = ['127.0.0.1']
 
 ALLOWED_HOSTS = ['*']
@@ -67,6 +66,11 @@ SINGLE_USER_MODE = False
 
 # URL to redirect to if there are no processing nodes when visiting the dashboard
 PROCESSING_NODES_ONBOARDING = None
+
+# Enable desktop mode. In desktop mode some styling changes
+# are applied to make the application look nicer on desktop
+# as well as disabling certain features (e.g. sharing)
+DESKTOP_MODE = False
 
 # Default CSS to add to theme
 DEFAULT_THEME_CSS = ''
@@ -115,28 +119,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'webodm.urls'
-
-TEMPLATES = [
-    {
-        'BACKEND':
-        'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'app', 'templates'),
-            os.path.join(BASE_DIR, 'app', 'templates', 'app'), BASE_DIR
-        ],
-        'APP_DIRS':
-        True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'app.contexts.settings.load',
-            ],
-        },
-    },
-]
 
 WSGI_APPLICATION = 'webodm.wsgi.application'
 
@@ -197,6 +179,10 @@ TIME_ZONE = tzlocal.get_localzone().zone
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale')
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
@@ -290,6 +276,28 @@ MEDIA_TMP = os.path.join(MEDIA_ROOT, 'tmp')
 
 FILE_UPLOAD_TEMP_DIR = MEDIA_TMP
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'app', 'templates'),
+            os.path.join(BASE_DIR, 'app', 'templates', 'app'),
+            BASE_DIR,
+            MEDIA_ROOT,
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'app.contexts.settings.load',
+            ],
+        },
+    },
+]
+
 # Store flash messages in cookies
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 MESSAGE_TAGS = {
@@ -365,6 +373,10 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_INCLUDE = ['worker.tasks', 'app.plugins.worker']
 CELERY_WORKER_REDIRECT_STDOUTS = False
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+
+# Number of minutes a processing node hasn't been seen 
+# before it should be considered offline
+NODE_OFFLINE_MINUTES = 5 
 
 if TESTING or FLUSHING:
     CELERY_TASK_ALWAYS_EAGER = True

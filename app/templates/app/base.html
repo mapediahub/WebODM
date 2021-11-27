@@ -21,6 +21,7 @@
     <script src="{% static 'app/js/vendor/modernizr-2.8.3.min.js' %}"></script>
     <script src="{% static 'app/js/vendor/es6-shim.min.js' %}"></script>
     <script src="{% static 'app/js/vendor/system.js' %}"></script>
+    <script src="{% url 'javascript-catalog' %}"></script>
 
     <link rel="stylesheet" href="{% static 'app/css/landing.css' %}">
 
@@ -123,7 +124,6 @@
       }(document, 'script', 'facebook-jssdk'));
     </script>
 </body>
-
 {{ SETTINGS.theme.html_after_body|safe }}
 
 </html>

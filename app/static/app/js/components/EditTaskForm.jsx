@@ -6,6 +6,7 @@ import ErrorMessage from './ErrorMessage';
 import PropTypes from 'prop-types';
 import Storage from '../classes/Storage';
 import $ from 'jquery';
+import { _, interpolate } from '../classes/gettext';
 
 
 class EditTaskForm extends React.Component {
@@ -25,20 +26,18 @@ class EditTaskForm extends React.Component {
       onFormChanged: PropTypes.func,
       inReview: PropTypes.bool,
       task: PropTypes.object,
-      suggestedTaskName: PropTypes.string,
+      suggestedTaskName: PropTypes.oneOfType([PropTypes.string, PropTypes.func])
   };
 
   constructor(props){
     super(props);
 
-    this.namePlaceholder = "Task of " + (new Date()).toISOString();
-
     this.state = {
       error: "",
       presetError: "",
       presetActionPerforming: false,
-
-      name: props.suggestedTaskName ? props.suggestedTaskName : (props.task !== null ? (props.task.name || "") : ""),
+      namePlaceholder: typeof props.suggestedTaskName === "string" ? props.suggestedTaskName : (props.task !== null ? (props.task.name || "") : "Task of " + (new Date()).toISOString()),
+      name: typeof props.suggestedTaskName === "string" ? props.suggestedTaskName : (props.task !== null ? (props.task.name || "") : ""),
       loadedProcessingNodes: false,
       loadedPresets: false,
 
@@ -47,7 +46,9 @@ class EditTaskForm extends React.Component {
       selectedPreset: null,
       presets: [],
 
-      editingPreset: false
+      editingPreset: false,
+
+      loadingTaskName: false
     };
 
     this.handleNameChange = this.handleNameChange.bind(this);
@@ -85,7 +86,7 @@ class EditTaskForm extends React.Component {
 
   loadProcessingNodes(){
     const failed = () => {
-      this.setState({error: "Could not load list of processing nodes. Are you connected to the internet?"});
+      this.setState({error: _("Could not load list of processing nodes. Are you connected to the internet?")});
     }
 
     this.nodesRequest = 
@@ -93,11 +94,8 @@ class EditTaskForm extends React.Component {
         if (Array.isArray(json)){
           // No nodes with options?
           const noProcessingNodesError = (nodes) => {
-            var extra = nodes ? "We tried to reach:<ul>" + nodes.map(n => Utils.html`<li><a href="${n.url}">${n.label}</a></li>`).join("") + "</ul>" : "";
-            this.setState({error: `There are no usable processing nodes. ${extra}Make sure that at least one processing node is reachable and
-             that you have granted the current user sufficient permissions to view 
-             the processing node (by going to Administration -- Processing Nodes -- Select Node -- Object Permissions -- Add User/Group and check CAN VIEW PROCESSING NODE).
-             If you are bringing a node back online, it will take about 30 seconds for WebODM to recognize it.`});
+            var extra = nodes ? _("We tried to reach:") + "<ul>" + nodes.map(n => Utils.html`<li><a href="${n.url}">${n.label}</a></li>`).join("") + "</ul>" : "";
+            this.setState({error: _("There are no usable processing nodes.") + extra + _("Make sure that at least one processing node is reachable and that you have granted the current user sufficient permissions to view the processing node (by going to Administration -- Processing Nodes -- Select Node -- Object Permissions -- Add User/Group and check CAN VIEW PROCESSING NODE). If you are bringing a node back online, it will take about 30 seconds for WebODM to recognize it.")});
           };
 
           if (json.length === 0){
@@ -215,7 +213,7 @@ class EditTaskForm extends React.Component {
 
   loadPresets(){
     const failed = () => {
-      this.setState({error: "Could not load list of presets. Are you connected to the internet?"});
+      this.setState({error: _("Could not load list of presets. Are you connected to the internet?")});
     }
 
     this.presetsRequest = 
@@ -224,13 +222,14 @@ class EditTaskForm extends React.Component {
           // Add custom preset
           const customPreset = {
             id: -1,
-            name: "(Custom)",
+            name: "(" + _("Custom") + ")",
             options: [],
             system: true
           };
           presets.unshift(customPreset);
 
           // Choose preset
+          _("Default"); // Add translation
           let selectedPreset = presets[0],
               defaultPreset = presets.find(p => p.name === "Default"); // Do not translate Default
           if (defaultPreset) selectedPreset = defaultPreset;
@@ -272,6 +271,23 @@ class EditTaskForm extends React.Component {
       });
   }
 
+  loadSuggestedName = () => {
+    if (typeof this.props.suggestedTaskName === "function"){
+        this.setState({loadingTaskName: true});
+
+        this.props.suggestedTaskName().then(name => {
+            if (this.state.loadingTaskName){
+                this.setState({loadingTaskName: false, name});
+            }else{
+                // User started typing its own name
+            }
+        }).catch(e => {
+            // Do Nothing
+            this.setState({loadingTaskName: false});
+        })
+    }
+  }
+
   handleSelectPreset(e){
     this.selectPresetById(e.target.value);
   }
@@ -284,6 +300,7 @@ class EditTaskForm extends React.Component {
   componentDidMount(){
     this.loadProcessingNodes();
     this.loadPresets();
+    this.loadSuggestedName();
   }
 
   componentDidUpdate(prevProps, prevState){
@@ -304,7 +321,7 @@ class EditTaskForm extends React.Component {
   }
 
   handleNameChange(e){
-    this.setState({name: e.target.value});
+    this.setState({name: e.target.value, loadingTaskName: false});
   }
 
   selectNodeByKey(key){
@@ -333,7 +350,7 @@ class EditTaskForm extends React.Component {
   getAvailableOptionsOnlyText(options, availableOptions){
     const opts = this.getAvailableOptionsOnly(options, availableOptions);
     let res = opts.map(opt => `${opt.name}:${opt.value}`).join(", ");
-    if (!res) res = "Default";
+    if (!res) res = _("Default");
     return res;
   }
 
@@ -364,7 +381,7 @@ class EditTaskForm extends React.Component {
       if (!customPreset){
         customPreset = {
           id: -1,
-          name: "(Custom)",
+          name: "(" + _("Custom") + ")",
           options: [],
           system: true
         };
@@ -417,7 +434,7 @@ class EditTaskForm extends React.Component {
     this.setState({presetActionPerforming: true});
 
     const isCustom = selectedPreset.id === -1,
-          name = isCustom ? "My Preset" : "Copy of " + selectedPreset.name;
+          name = isCustom ? _("My Preset") : interpolate(_("Copy of %(preset)s"), {preset: selectedPreset.name});
 
     $.ajax({
       url: `/api/presets/`,
@@ -440,7 +457,7 @@ class EditTaskForm extends React.Component {
       this.setState({presets, selectedPreset: preset});
       this.handleEditPreset();
     }).fail(() => {
-      this.setState({presetError: "Could not duplicate the preset. Please try to refresh the page."});
+      this.setState({presetError: _("Could not duplicate the preset. Please try to refresh the page.")});
     }).always(() => {
       this.setState({presetActionPerforming: false});
     });
@@ -449,11 +466,11 @@ class EditTaskForm extends React.Component {
   handleDeletePreset(){
     const { selectedPreset, presets } = this.state;
     if (selectedPreset.system){
-      this.setState({presetError: "System presets can only be removed by a staff member from the Administration panel."});
+      this.setState({presetError: _("System presets can only be removed by a staff member from the Administration panel.")});
       return;
     }
 
-    if (window.confirm(`Are you sure you want to delete "${selectedPreset.name}"?`)){
+    if (window.confirm(interpolate(_('Are you sure you want to delete "%(preset)s"?'), { preset: selectedPreset.name}))){
       this.setState({presetActionPerforming: true});
 
       return $.ajax({
@@ -466,7 +483,7 @@ class EditTaskForm extends React.Component {
         // Select first by default
         this.setState({presets, selectedPreset: presets[0], editingPreset: false});
       }).fail(() => {
-        this.setState({presetError: "Could not delete the preset. Please try to refresh the page."});
+        this.setState({presetError: _("Could not delete the preset. Please try to refresh the page.")});
       }).always(() => {
         this.setState({presetActionPerforming: false});
       });
@@ -482,7 +499,7 @@ class EditTaskForm extends React.Component {
           <div className="alert alert-warning">
               <div dangerouslySetInnerHTML={{__html:this.state.error}}></div>
               <button className="btn btn-sm btn-primary" onClick={this.retryLoad}>
-                <i className="fa fa-rotate-left"></i>&nbsp;Retry
+                <i className="fa fa-rotate-left"></i> {_("Retry")}
               </button>
           </div>
         </div>);
@@ -498,35 +515,35 @@ class EditTaskForm extends React.Component {
             value={this.state.selectedPreset.id} 
             onChange={this.handleSelectPreset}>
         {this.state.presets.map(preset => 
-            <option value={preset.id} key={preset.id} className={preset.system ? "system-preset" : ""}>{preset.name}</option>
+            <option value={preset.id} key={preset.id} className={preset.system ? "system-preset" : ""}>{preset.name === "Default" ? _(preset.name) : preset.name}</option>
         )}
         </select>
 
         {!this.state.presetActionPerforming ?
         <div className="btn-group presets-dropdown pl-2">
-            <button style={{ width: 156 }} type="button" className="btn btn-secondary" title="Edit Task Options" onClick={this.handleEditPreset}>
-              <i className="fa fa-sliders-h"></i>&nbsp;Edit
+            <button style={{ width: 156 }} type="button" className="btn btn-secondary" title={_("Edit Task Options")} onClick={this.handleEditPreset}>
+              <i className="fa fa-sliders-h"></i>&nbsp;{_("Edit")}
             </button>
             <button type="button" className="btn btn-secondary dropdown-toggle" data-toggle="dropdown" id={"btn-group-" + formId}>
                 <span className="caret"></span>
             </button>
             <div className="dropdown-menu db-dropdown-menu" aria-labelledby={"btn-group-" + formId}>
               <div className="dropdown-item" onClick={this.handleEditPreset}>
-                <i className="fa fa-sliders-h"></i>&nbsp;Edit
+                <i className="fa fa-sliders-h"></i>&nbsp;{_("Edit")}
               </div>
               <div className="dropdown-divider"></div>
               {
                 this.state.selectedPreset.id !== -1 ?
                 <div className="dropdown-item" onClick={this.handleDuplicateSavePreset}>
-                  <i className="fa fa-copy"></i>&nbsp;Duplicate
+                  <i className="fa fa-copy"></i>&nbsp;{_("Duplicate")}
                 </div>
               :
                 <div className="dropdown-item" onClick={this.handleDuplicateSavePreset}>
-                  <i className="fa fa-save"></i>&nbsp;Save
+                  <i className="fa fa-save"></i>&nbsp;{_("Save")}
                 </div>
               }
               <div className={(this.state.selectedPreset.system ? "disabled" : "") + " dropdown-item"} onClick={this.state.selectedPreset.system ? undefined : this.handleDuplicateSavePreset}>
-                <i className="fa fa-trash"></i>&nbsp;Delete
+                <i className="fa fa-trash"></i>&nbsp;{_("Delete")}
               </div>
             </div>
         </div>
@@ -537,7 +554,7 @@ class EditTaskForm extends React.Component {
       taskOptions = (
         <div>
           <div className="form-group row">
-            <label className="col-2 control-label">Processing Node</label>
+            <label className="col-2 control-label">{_("Processing Node")}</label>
               <div className="col-10">
                 <select className="form-control db-input" value={this.state.selectedNode.key} onChange={this.handleSelectNode}>
                 {this.state.processingNodes.map(node => 
@@ -547,7 +564,7 @@ class EditTaskForm extends React.Component {
               </div>
           </div>
           <div className="form-group row">
-            <label className="col-2 control-label">Options:&nbsp;</label>
+            <label className="col-2 control-label">{_("Options:")}&nbsp;</label>
             <div className="col-10 d-flex flex-row align-items-center w100">
               {!this.props.inReview ? optionsSelector : 
                <div className="review-options d-flex flex-row align-items-center">
@@ -571,15 +588,18 @@ class EditTaskForm extends React.Component {
         );
     }else{
       taskOptions = (<div className="form-group">
-          <div className="">Loading processing nodes and presets... <i className="fa fa-sync fa-spin fa-fw"></i></div>
+          <div className="">{_("Loading processing nodes and presets...")} <i className="fa fa-sync fa-spin fa-fw"></i></div>
         </div>);
     }
 
     return (
       <div className="edit-task-form">
         <div className="form-group row">
-          <label className="col-2 control-label">Name</label>
+          <label className="col-2 control-label">{_("Name")}</label>
           <div className="col-10">
+          {this.state.loadingTaskName ? 
+            <i className="fa fa-circle-notch fa-spin fa-fw name-loading"></i>
+            : ""}
             <input type="text" 
                 onChange={this.handleNameChange} 
                 className="form-control db-input"
