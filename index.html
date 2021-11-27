@@ -1,0 +1,1780 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>WebODM Documentation</title>
+
+    <style>
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight, .highlight .w {
+  color: #f8f8f2;
+  background-color: #272822;
+}
+.highlight .err {
+  color: #272822;
+  background-color: #f92672;
+}
+.highlight .c, .highlight .ch, .highlight .cd, .highlight .cm, .highlight .cpf, .highlight .c1, .highlight .cs {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #f4bf75;
+}
+.highlight .nt {
+  color: #f4bf75;
+}
+.highlight .o, .highlight .ow {
+  color: #f8f8f2;
+}
+.highlight .p, .highlight .pi {
+  color: #f8f8f2;
+}
+.highlight .gi {
+  color: #a6e22e;
+}
+.highlight .gd {
+  color: #f92672;
+}
+.highlight .gh {
+  color: #66d9ef;
+  background-color: #272822;
+  font-weight: bold;
+}
+.highlight .k, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kv {
+  color: #ae81ff;
+}
+.highlight .kc {
+  color: #fd971f;
+}
+.highlight .kt {
+  color: #fd971f;
+}
+.highlight .kd {
+  color: #fd971f;
+}
+.highlight .s, .highlight .sb, .highlight .sc, .highlight .dl, .highlight .sd, .highlight .s2, .highlight .sh, .highlight .sx, .highlight .s1 {
+  color: #a6e22e;
+}
+.highlight .sa {
+  color: #ae81ff;
+}
+.highlight .sr {
+  color: #a1efe4;
+}
+.highlight .si {
+  color: #cc6633;
+}
+.highlight .se {
+  color: #cc6633;
+}
+.highlight .nn {
+  color: #f4bf75;
+}
+.highlight .nc {
+  color: #f4bf75;
+}
+.highlight .no {
+  color: #f4bf75;
+}
+.highlight .na {
+  color: #66d9ef;
+}
+.highlight .m, .highlight .mb, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .il, .highlight .mo, .highlight .mx {
+  color: #a6e22e;
+}
+.highlight .ss {
+  color: #a6e22e;
+}
+    </style>
+    <link href="stylesheets/screen.css" rel="stylesheet" media="screen" />
+    <link href="stylesheets/print.css" rel="stylesheet" media="print" />
+      <script src="javascripts/all.js"></script>
+  </head>
+
+  <body class="index" data-languages="[&quot;code&quot;]">
+    <a href="#" id="nav-button">
+      <span>
+        NAV
+        <img src="images/navbar.png" alt="" />
+      </span>
+    </a>
+    <div class="tocify-wrapper">
+      <img src="images/logo.png" alt="" />
+        <div class="lang-selector">
+              <a href="#" data-language-name="code">code</a>
+        </div>
+        <div class="search">
+          <input type="text" class="search" id="input-search" placeholder="Search">
+        </div>
+        <ul class="search-results"></ul>
+      <div id="toc">
+      </div>
+        <ul class="toc-footer">
+            <li><a href='https://github.com/OpenDroneMap/WebODM'>WebODM on GitHub</a></li>
+            <li><a href='https://github.com/OpenDroneMap/ODM'>ODM on GitHub</a></li>
+            <li><a href='https://github.com/OpenDroneMap/NodeODM'>NodeODM on GitHub</a></li>
+        </ul>
+    </div>
+    <div class="page-wrapper">
+      <div class="dark-box"></div>
+      <div class="content">
+        
+          <h1 id="introduction">Introduction</h1>
+
+<p><a href="https://github.com/OpenDroneMap/WebODM">WebODM</a> is a free, user-friendly, extendable application and API for drone image processing. It generates georeferenced maps, point clouds and textured 3D models from aerial images.</p>
+
+<p>Developers can leverage this API to extend the functionality of <a href="https://github.com/OpenDroneMap/WebODM">WebODM</a> or integrate it with existing software like <a href="http://www.qgis.org/">QGIS</a> or <a href="http://www.autodesk.com/products/autocad/overview">AutoCAD</a>.</p>
+
+<p><img src="https://raw.githubusercontent.com/OpenDroneMap/WebODM/master/screenshots/pointcloud.png" alt="Point Cloud" /></p>
+
+          <h1 id="quickstart">Quickstart</h1>
+
+<h2 id="how-to-process-images">How To Process Images</h2>
+
+<p>In this tutorial we&rsquo;ll explore how to process an orthophoto from a set of aerial images using Python. To do that we&rsquo;ll need to:</p>
+
+<ul>
+<li>Authenticate</li>
+<li>Create a <a href="#project">Project</a>. Projects are a way to group together related <a href="#task">Task</a> items</li>
+<li>Upload some images to create a <a href="#task">Task</a></li>
+<li>Check for <a href="#task">Task</a> progress. Photogrammetry can take a long time, so results could take a few minutes to a few hours to be processed.</li>
+<li>Download the resulting orthophoto.</li>
+</ul>
+
+<aside class="notice">Most of the examples in this document use <a href="http://docs.python-requests.org/en/latest/index.html" target="_blank">requests</a>. Make sure it&rsquo;s installed before running any code:<br/><br/>
+
+<pre class="higlight shell">
+$ pip install requests
+</pre>
+</aside>
+
+<aside class="notice">
+The <a href="https://github.com/OpenDroneMap/WebODM/tree/master/slate/examples/process_images.py" target="_blank">source code</a> for this example is available on GitHub</a>.
+</aside>
+<div class="highlight"><pre class="highlight python"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://localhost:8000/api/token-auth/'</span><span class="p">,</span> 
+                    <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">'username'</span><span class="p">:</span> <span class="s">'admin'</span><span class="p">,</span>
+                          <span class="s">'password'</span><span class="p">:</span> <span class="s">'admin'</span><span class="p">}).</span><span class="n">json</span><span class="p">()</span>
+<span class="n">token</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s">'token'</span><span class="p">]</span>
+</code></pre></div>
+<p>First, we <a href="#authenticate">authenticate</a> with WebODM. A <code class="prettyprint">token</code> is returned when authentication is successful.
+<div class="clear"></div></p>
+<div class="highlight"><pre class="highlight python"><code><span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://localhost:8000/api/projects/'</span><span class="p">,</span> 
+                    <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">'Authorization'</span><span class="p">:</span> <span class="s">'JWT {}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">token</span><span class="p">)},</span>
+                    <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'Hello WebODM!'</span><span class="p">}).</span><span class="n">json</span><span class="p">()</span>
+<span class="n">project_id</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s">'id'</span><span class="p">]</span>
+</code></pre></div>
+<p>Then we need to create a <a href="#project">Project</a>. We pass our <code class="prettyprint">token</code> via the <code class="prettyprint">Authorization</code> header. If we forget to pass this header, the system will not authenticate us and will refuse to process the request. We also assign a <code class="prettyprint">name</code> to our project.
+<div class="clear"></div></p>
+<div class="highlight"><pre class="highlight python"><code><span class="n">images</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s">'images'</span><span class="p">,</span> <span class="p">(</span><span class="s">'image1.jpg'</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s">'image1.jpg'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">),</span> <span class="s">'image/jpg'</span><span class="p">)),</span> 
+    <span class="p">(</span><span class="s">'images'</span><span class="p">,</span> <span class="p">(</span><span class="s">'image2.jpg'</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="s">'image2.jpg'</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">),</span> <span class="s">'image/jpg'</span><span class="p">)),</span>
+    <span class="c1"># ...
+</span><span class="p">]</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">([</span>
+    <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">"orthophoto-resolution"</span><span class="p">,</span> <span class="s">'value'</span><span class="p">:</span> <span class="mi">24</span><span class="p">}</span>
+<span class="p">])</span>
+
+<span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">'http://localhost:8000/api/projects/{}/tasks/'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">project_id</span><span class="p">),</span> 
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">'Authorization'</span><span class="p">:</span> <span class="s">'JWT {}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">token</span><span class="p">)},</span>
+            <span class="n">files</span><span class="o">=</span><span class="n">images</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s">'options'</span><span class="p">:</span> <span class="n">options</span>
+            <span class="p">}).</span><span class="n">json</span><span class="p">()</span>
+
+<span class="n">task_id</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s">'id'</span><span class="p">]</span>
+</code></pre></div>
+<p>We can then create a <a href="#task">Task</a>. The only required parameter is a list of multiple, multipart-encoded <code class="prettyprint">images</code>. Processing will start automatically
+as soon as a <a href="#processing-node">Processing Node</a> is available. It is possible to specify additional options by passing an <code class="prettyprint">options</code> value, which is a JSON-encoded list of name/value pairs. Several other options are available. See the <a href="#processing-options">Task - Processing Options</a> reference for more information.
+<div class="clear"></div></p>
+<div class="highlight"><pre class="highlight python"><code><span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://localhost:8000/api/projects/{}/tasks/{}/'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">project_id</span><span class="p">,</span> <span class="n">task_id</span><span class="p">),</span> 
+                <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">'Authorization'</span><span class="p">:</span> <span class="s">'JWT {}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">token</span><span class="p">)}).</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">res</span><span class="p">[</span><span class="s">'status'</span><span class="p">]</span> <span class="o">==</span> <span class="n">status_codes</span><span class="p">.</span><span class="n">COMPLETED</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Task has completed!"</span><span class="p">)</span>
+        <span class="k">break</span>
+    <span class="k">elif</span> <span class="n">res</span><span class="p">[</span><span class="s">'status'</span><span class="p">]</span> <span class="o">==</span> <span class="n">status_codes</span><span class="p">.</span><span class="n">FAILED</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Task failed: {}"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+        <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">"Processing, hold on..."</span><span class="p">)</span>
+        <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+<p>We periodically check for the <a href="#task">Task</a> status using a loop.
+<div class="clear"></div></p>
+<div class="highlight"><pre class="highlight python"><code><span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"http://localhost:8000/api/projects/{}/tasks/{}/download/orthophoto.tif"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">project_id</span><span class="p">,</span> <span class="n">task_id</span><span class="p">),</span> 
+                        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">'Authorization'</span><span class="p">:</span> <span class="s">'JWT {}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">token</span><span class="p">)},</span>
+                        <span class="n">stream</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">"orthophoto.tif"</span><span class="p">,</span> <span class="s">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">res</span><span class="p">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="n">chunk</span><span class="p">:</span>
+            <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Saved ./orthophoto.tif"</span><span class="p">)</span>
+</code></pre></div>
+<p>Our orthophoto is ready to be downloaded. A variety of other assets, including a dense 3D point cloud and a textured model <a href="#download-assets">are also available</a>.</p>
+
+<p>Congratulations! You just processed some images.</p>
+
+<p><img src="https://i.imgflip.com/2/ipzhf.jpg" alt="Success" /></p>
+
+          <h1 id="reference">Reference</h1>
+
+<h2 id="authentication">Authentication</h2>
+
+<h3 id="authentication-basics">Authentication Basics</h3>
+
+<blockquote>
+<p>Get authentication token:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight shell"><code>curl <span class="nt">-X</span> POST <span class="nt">-d</span> <span class="s2">"username=testuser&amp;password=testpass"</span> http://localhost:8000/api/token-auth/
+
+<span class="o">{</span><span class="s2">"token"</span>:<span class="s2">"eyJ0eXAiO..."</span><span class="o">}</span>
+</code></pre></div>
+<blockquote>
+<p>Use authentication token:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight shell"><code>curl <span class="nt">-H</span> <span class="s2">"Authorization: JWT &lt;your_token&gt;"</span> http://localhost:8000/api/projects/
+
+<span class="o">{</span><span class="s2">"count"</span>:13, ...<span class="o">}</span>
+</code></pre></div>
+<blockquote>
+<p>Use authentication token via querystring (less secure):</p>
+</blockquote>
+<div class="highlight"><pre class="highlight shell"><code>curl http://localhost:8000/api/projects/?jwt<span class="o">=</span>&lt;your_token&gt;
+
+<span class="o">{</span><span class="s2">"count"</span>:13, ...<span class="o">}</span>
+</code></pre></div>
+<p><code class="prettyprint">POST /api/token-auth/</code></p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>username</td>
+<td>string</td>
+<td>Username</td>
+</tr>
+<tr>
+<td>password</td>
+<td>string</td>
+<td>Password</td>
+</tr>
+</tbody></table>
+
+<p>To access the API, you need to provide a valid username and password. You can create users from WebODM&rsquo;s Administration page.</p>
+
+<p>If authentication is successful, you will be issued a token. All API calls should include the following header:</p>
+
+<table><thead>
+<tr>
+<th>Header</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Authorization: JWT <code class="prettyprint">your_token</code></td>
+</tr>
+</tbody></table>
+
+<p>The token expires after a set amount of time. See <a href="#token-expiration">Token Expiration</a> for more information.</p>
+
+<p>Since applications sometimes do not allow headers to be modified, you can also authenticate by appending the <code class="prettyprint">jwt</code> querystring parameter to a protected URL. This is less secure, so pass the token via header if possible.</p>
+
+<h3 id="token-expiration">Token Expiration</h3>
+
+<p>The token expires after a predefined amount of time. The expiration time is dependent on WebODM&rsquo;s settings. You will need to request another token when a token expires.</p>
+
+<p>You know that a token has expired if any API call returns a <code class="prettyprint">403</code> status code with the JSON body <code class="prettyprint">{&#39;detail&#39;: &#39;Signature has expired.&#39;}</code>.</p>
+
+          <h2 id="project">Project</h2>
+
+<blockquote>
+<p>Example project:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"tasks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="mi">7</span><span class="p">,</span><span class="w">
+        </span><span class="mi">6</span><span class="p">,</span><span class="w">
+        </span><span class="mi">5</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-12-07T02:09:28.515319Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"delete"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"change"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"add"</span><span class="p">,</span><span class="w">
+        </span><span class="s2">"view"</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>A <a href="#project">Project</a> is a collection of <a href="#task">Task</a> items.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>int</td>
+<td>Unique identifier</td>
+</tr>
+<tr>
+<td>tasks</td>
+<td>int[]</td>
+<td>List of task IDs associated with this project</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>string</td>
+<td>Creation date and time</td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>Name of the project</td>
+</tr>
+<tr>
+<td>description</td>
+<td>string</td>
+<td>A more in-depth description</td>
+</tr>
+<tr>
+<td>permissions</td>
+<td>string[]</td>
+<td>List of actions that the current user is allowed to perform. See <a href="#permission-values">Permissions Values</a></td>
+</tr>
+</tbody></table>
+
+<h3 id="create-a-project">Create a project</h3>
+
+<p><code class="prettyprint">POST /api/projects/</code></p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td>*</td>
+<td>&ldquo;&rdquo;</td>
+<td>Name of the project</td>
+</tr>
+<tr>
+<td>description</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>A more in-depth description</td>
+</tr>
+</tbody></table>
+
+<h3 id="update-a-project">Update a project</h3>
+
+<p><code class="prettyprint">PATCH /api/projects/{id}/</code></p>
+
+<p>Parameters are the same as above.</p>
+
+<h3 id="delete-a-project">Delete a project</h3>
+
+<p><code class="prettyprint">DELETE /api/projects/{id}/</code></p>
+
+<p>Upon deletion, all <a href="#task">Task</a> items associated with the <a href="#project">Project</a> are deleted also. The operation is irreversible.</p>
+
+<h3 id="get-single-project">Get single project</h3>
+
+<p><code class="prettyprint">GET /api/projects/{id}/</code></p>
+
+<h3 id="get-list-of-projects">Get list of projects</h3>
+
+<blockquote>
+<p>Project list:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"next"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"previous"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"results"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"tasks"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+                </span><span class="mi">7</span><span class="p">,</span><span class="w">
+                </span><span class="mi">6</span><span class="p">,</span><span class="w">
+                </span><span class="mi">5</span><span class="w">
+            </span><span class="p">],</span><span class="w">
+            </span><span class="nl">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-12-07T02:09:28.515319Z"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p><code class="prettyprint">GET /api/projects/</code></p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>page</td>
+<td></td>
+<td>1</td>
+<td>Page number</td>
+</tr>
+<tr>
+<td>id</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by id</td>
+</tr>
+<tr>
+<td>name</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by name</td>
+</tr>
+<tr>
+<td>description</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by description</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by created_at</td>
+</tr>
+<tr>
+<td>ordering</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Ordering field to sort results by</td>
+</tr>
+</tbody></table>
+
+<h4 id="example-filtering-by-name">Example: Filtering by name</h4>
+
+<p><code class="prettyprint">GET /api/projects/?name=hello</code></p>
+
+<p>Retrieves projects that have a name of &ldquo;hello&rdquo;.</p>
+
+<h4 id="example-sorting">Example: Sorting</h4>
+
+<p><code class="prettyprint">GET /api/projects/?ordering=-id</code></p>
+
+<p>Sort by project ID, descending order.</p>
+
+<aside class="notice">Only projects visible to the current user are returned.</aside>
+
+          <h2 id="task">Task</h2>
+
+<blockquote>
+<p>Example task:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">134</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"project"</span><span class="p">:</span><span class="w"> </span><span class="mi">27</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"processing_node"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"processing_node_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"localhost:3000"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"images_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">48</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"can_rerun_from"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+  </span><span class="nl">"available_assets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"all.zip"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"orthophoto.tif"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"orthophoto.png"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"georeferenced_model.las"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"georeferenced_model.ply"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"georeferenced_model.csv"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"textured_model.zip"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"uuid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4338d684-91b4-49a2-b907-8ba171894393"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Task Name"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"processing_time"</span><span class="p">:</span><span class="w"> </span><span class="mi">2197417</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"auto_processing_node"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"last_error"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"options"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"use-opensfm-pointcloud"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-02-18T18:01:55.402551Z"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"pending_action"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"upload_progress"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"resize_progress"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"running_progress"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>A <a href="#task">Task</a> is the basic processing unit of WebODM. To compute an orthophoto, point cloud and textured model from a set of images, you need to create a <a href="#task">Task</a>.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>int</td>
+<td>Unique identifier</td>
+</tr>
+<tr>
+<td>project</td>
+<td>int</td>
+<td><a href="#project">Project</a> ID the task belongs to</td>
+</tr>
+<tr>
+<td>processing_node</td>
+<td>int</td>
+<td>The ID of the <a href="#processing-node">Processing Node</a> this task has been assigned to, or <code class="prettyprint">null</code> if no <a href="#processing-node">Processing Node</a> has been assigned.</td>
+</tr>
+<tr>
+<td>processing_node_name</td>
+<td>string</td>
+<td>The name of the processing node below, or <code class="prettyprint">null</code> if no <a href="#processing-node">Processing Node</a> has been assigned.</td>
+</tr>
+<tr>
+<td>images_count</td>
+<td>int</td>
+<td>Number of images</td>
+</tr>
+<tr>
+<td>can_rerun_from</td>
+<td>string[]</td>
+<td>List of possible &ldquo;rerun-from&rdquo; options that this task could restart from, given its currently assigned processing node. If this is an empty list, the task can only be restarted from the start of the pipeline.</td>
+</tr>
+<tr>
+<td>available_assets</td>
+<td>string[]</td>
+<td>List of <a href="#download-assets">assets</a> available for download</td>
+</tr>
+<tr>
+<td>uuid</td>
+<td>string</td>
+<td>Unique identifier assigned by a <a href="#processing-node">Processing Node</a> once processing has started.</td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>User defined name for the task</td>
+</tr>
+<tr>
+<td>processing_time</td>
+<td>int</td>
+<td>Milliseconds that have elapsed since the start of processing, or <code class="prettyprint">-1</code> if no information is available. Useful for displaying a time status report to the user.</td>
+</tr>
+<tr>
+<td>auto_processing_node</td>
+<td>boolean</td>
+<td>Whether WebODM should automatically assign the next available <a href="#processing-node">Processing Node</a> to process this <a href="#task">Task</a>. A user can set this to <code class="prettyprint">false</code> to manually choose a <a href="#processing-node">Processing Node</a>.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>int</td>
+<td>One of <a href="#status-codes">Status Codes</a>, or <code class="prettyprint">null</code> if no status is available.</td>
+</tr>
+<tr>
+<td>last_error</td>
+<td>string</td>
+<td>The last error message reported by a <a href="#processing-node">Processing Node</a> in case of processing failure.</td>
+</tr>
+<tr>
+<td>options</td>
+<td>JSON[]</td>
+<td>JSON-encoded list of name/value pairs, where each pair represents a command line option to be passed to a <a href="#processing-node">Processing Node</a>.</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>string</td>
+<td>Creation date and time.</td>
+</tr>
+<tr>
+<td>pending_action</td>
+<td>int</td>
+<td>One of <a href="#pending-actions">Pending Actions</a>, or <code class="prettyprint">null</code> if no pending action is set.</td>
+</tr>
+<tr>
+<td>upload_progress</td>
+<td>float</td>
+<td>Value between 0 and 1 indicating the upload progress of this task&rsquo;s files to the processing node.</td>
+</tr>
+<tr>
+<td>resize_progress</td>
+<td>float</td>
+<td>Value between 0 and 1 indicating the resize progress of this task&rsquo;s images.</td>
+</tr>
+<tr>
+<td>running_progress</td>
+<td>float</td>
+<td>Value between 0 and 1 indicating the running progress (estimated) of this task.</td>
+</tr>
+</tbody></table>
+
+<aside class="notice">Tasks inherit the permission settings from the <a href="#project">Project</a> they belong to.</aside>
+
+<h3 id="create-a-task">Create a task</h3>
+
+<p><code class="prettyprint">POST /api/projects/{project_id}/tasks/</code></p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>images[]</td>
+<td>*</td>
+<td>&ldquo;&rdquo;</td>
+<td>List of multipart-encoded images (2 minimum)</td>
+</tr>
+<tr>
+<td>processing_node</td>
+<td></td>
+<td>null</td>
+<td>The ID of the <a href="#processing-node">Processing Node</a> this <a href="#task">Task</a> should be assigned to. If not specified, and auto_processing_node is <code class="prettyprint">true</code>, a <a href="#processing-node">Processing Node</a> will be automatically assigned.</td>
+</tr>
+<tr>
+<td>name</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>User defined name for the task</td>
+</tr>
+<tr>
+<td>auto_processing_node</td>
+<td></td>
+<td>true</td>
+<td>Whether WebODM should automatically assign the next available <a href="#processing-node">Processing Node</a> to process this <a href="#task">Task</a>.</td>
+</tr>
+<tr>
+<td>options</td>
+<td></td>
+<td>&ldquo;[]&rdquo;</td>
+<td>JSON-encoded list of name/value pairs, where each pair represents a command line option to be passed to a <a href="#processing-node">Processing Node</a>.</td>
+</tr>
+</tbody></table>
+
+<p>You assign a <a href="#task">Task</a> to a <a href="#project">Project</a> by passing the proper <code class="prettyprint">project_id</code> path in the URL.</p>
+
+<h3 id="update-a-task">Update a task</h3>
+
+<p><code class="prettyprint">PATCH /api/projects/{project_id}/tasks/{task_id}/</code></p>
+
+<p>Parameters are the same as above.</p>
+
+<h3 id="import-task">Import Task</h3>
+
+<p><code class="prettyprint">POST /api/projects/{project_id}/tasks/import</code></p>
+
+<p>Import task that have been processed by another WebODM instance (or via <a href="https://webodm.net">webodm.net</a> or NodeODM)</p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td></td>
+<td>Imported Task</td>
+<td>User defined name for the task.</td>
+</tr>
+<tr>
+<td>filename</td>
+<td>*/</td>
+<td>&ldquo;&rdquo;</td>
+<td>File with assets. Must be a zip.</td>
+</tr>
+<tr>
+<td>url</td>
+<td>/*</td>
+<td>&ldquo;&rdquo;</td>
+<td>URL to zipped zipped assets.</td>
+</tr>
+</tbody></table>
+
+<p>You have to provide either <code class="prettyprint">filename</code> or <code class="prettyprint">url</code> parameter (but not both) in order to import created assets.</p>
+
+<p>Remember to set proper Content-type for the request depending on how the assets are uploaded:</p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Content-Type</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>filename</td>
+<td>application/zip</td>
+</tr>
+<tr>
+<td>url</td>
+<td>application/x-www-form-urlencoded</td>
+</tr>
+</tbody></table>
+
+<h3 id="get-list-of-tasks">Get list of tasks</h3>
+
+<blockquote>
+<p>Task list:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json"><code><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"project"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"processing_node"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"processing_node_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"localhost:3000"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"images_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">89</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"uuid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2e8b687d-c269-4e2f-91b3-5a2cd51b5321"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Test name"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"processing_time"</span><span class="p">:</span><span class="w"> </span><span class="mi">8402184</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"auto_processing_node"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"status"</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"last_error"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"options"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w">
+        </span><span class="nl">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2016-12-08T13:32:28.139474Z"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"pending_action"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"upload_progress"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"resize_progress"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"running_progress"</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div>
+<p><code class="prettyprint">GET /api/projects/{project_id}/tasks/</code></p>
+
+<p>Retrieves all <a href="#task">Task</a> items associated with <code class="prettyprint">project_id</code>.</p>
+
+<h3 id="download-assets">Download assets</h3>
+
+<p><code class="prettyprint">GET /api/projects/{project_id}/tasks/{task_id}/download/{asset}</code></p>
+
+<p>After a task has been successfully processed, the user can download several assets from this URL. Not all assets are always available. For example if GPS information is missing from the input images, the <code class="prettyprint">orthophoto.tif</code> asset will be missing. You can check the <code class="prettyprint">available_assets</code> property of a <a href="#task">Task</a> to see which assets are available for download.</p>
+
+<table><thead>
+<tr>
+<th>Asset</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>all.zip</td>
+<td>Archive (.zip) containing all assets, including an orthophoto, TMS tiles, a textured 3D model and point cloud in various formats.</td>
+</tr>
+<tr>
+<td>orthophoto.tif</td>
+<td>GeoTIFF orthophoto.</td>
+</tr>
+<tr>
+<td>orthophoto.png</td>
+<td>PNG orthophoto.</td>
+</tr>
+<tr>
+<td>orthophoto.mbtiles</td>
+<td>Orthophoto MBTiles archive.</td>
+</tr>
+<tr>
+<td>textured_model.zip</td>
+<td>Archive containing the textured 3D model</td>
+</tr>
+<tr>
+<td>georeferenced_model.las</td>
+<td>Point cloud in .LAS format.</td>
+</tr>
+<tr>
+<td>georeferenced_model.ply</td>
+<td>Point cloud in .PLY format.</td>
+</tr>
+<tr>
+<td>georeferenced_model.csv</td>
+<td>Point cloud in .CSV format.</td>
+</tr>
+</tbody></table>
+
+<h3 id="download-assets-raw-path">Download assets (raw path)</h3>
+
+<p><code class="prettyprint">GET /api/projects/{project_id}/tasks/{task_id}/assets/{path}</code></p>
+
+<p>After a task has been successfully processed, its assets are stored in a directory on the file system. This API call allows direct access to the files in that directory (by default: <code class="prettyprint">WebODM/app/media/project/{project_id}/task/{task_id}/assets</code>). This can be useful to those applications that want to stream a <code class="prettyprint">Potree</code> dataset, or render a textured 3D model on the fly. </p>
+
+<aside class="notice">
+These paths could change in future versions of WebODM. If the asset you need can be reached via <b>/api/projects/{project_id}/tasks/download/{asset}</b>, use that instead.
+</aside>
+
+<h3 id="retrieve-console-output">Retrieve console output</h3>
+
+<blockquote>
+<p>Console output example:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight shell"><code>curl <span class="nt">-H</span> <span class="s2">"Authorization: JWT &lt;your_token&gt;"</span> http://localhost:8000/api/projects/2/tasks/1/output/?line<span class="o">=</span>5
+
+<span class="o">[</span>DEBUG]   /var/www/data/e453747f-5fd4-4654-9622-b02727b29fc5/images<span class="se">\n</span><span class="o">[</span>DEBUG]   Loaded DJI_0219.JPG | camera: dji fc300s ...
+</code></pre></div>
+<p><code class="prettyprint">GET /api/projects/{project_id}/tasks/{task_id}/output/</code></p>
+
+<p>As a <a href="#task">Task</a> is being processed, processing nodes will return an output string that can be used for debugging and informative purposes. Output is only available after processing has started.</p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>line</td>
+<td></td>
+<td>0</td>
+<td>Only display the output starting from a certain line number. This can be useful to display output in realtime to the user by keeping track of the number of lines that have been displayed to the user so far and thus avoiding to download all output at every request.</td>
+</tr>
+</tbody></table>
+
+<h3 id="cancel-task">Cancel task</h3>
+
+<p><code class="prettyprint">POST /api/projects/{project_id}/tasks/{task_id}/cancel/</code></p>
+
+<p>Stop processing a <a href="#task">Task</a>. Canceled tasks can be restarted.</p>
+
+<h3 id="remove-task">Remove task</h3>
+
+<p><code class="prettyprint">POST /api/projects/{project_id}/tasks/{task_id}/remove/</code></p>
+
+<p>All assets associated with it will be destroyed also. If the <a href="#task">Task</a> is currently being processed, processing will stop.</p>
+
+<h3 id="restart-task">Restart task</h3>
+
+<p><code class="prettyprint">POST /api/projects/{project_id}/tasks/{task_id}/restart/</code></p>
+
+<p>If a <a href="#task">Task</a> has been canceled or has failed processing, or has completed but the user decided to change processing options, it can be restarted. If the <a href="#processing-node">Processing Node</a> assigned to the <a href="#task">Task</a> has not changed, processing will happen more quickly compared to creating a new <a href="#task">Task</a>, since the <a href="#processing-node">Processing Node</a> remembers the <code class="prettyprint">uuid</code> of the <a href="#task">Task</a> and will attempt to reuse previous results from the computation pipeline.</p>
+
+<h3 id="orthophoto-tms-layer">Orthophoto TMS layer</h3>
+
+<p><code class="prettyprint">GET /api/projects/{project_id}/tasks/{task_id}/orthophoto/tiles.json</code></p>
+
+<p><code class="prettyprint">GET /api/projects/{project_id}/tasks/{task_id}/orthophoto/tiles/{Z}/{X}/{Y}.png</code></p>
+
+<p>After a task has been successfully processed, a TMS layer is made available for inclusion in programs such as <a href="http://leafletjs.com/">Leaflet</a> or <a href="http://cesiumjs.org">Cesium</a>.</p>
+
+<aside class="notice">If you use <a href="http://leafletjs.com/" target="_blank">Leaflet</a>, you&rsquo;ll need to pass the authentication token via querystring: /api/projects/{project_id}/tasks/{task_id}/tiles/{Z}/{X}/{Y}.png?jwt=your_token</aside>
+
+<h3 id="surface-model-tms-layer">Surface Model TMS layer</h3>
+
+<p><code class="prettyprint">GET /api/projects/{project_id}/tasks/{task_id}/dsm/tiles.json</code></p>
+
+<p><code class="prettyprint">GET /api/projects/{project_id}/tasks/{task_id}/dsm/tiles/{Z}/{X}/{Y}.png</code></p>
+
+<h3 id="terrain-model-tms-layer">Terrain Model TMS layer</h3>
+
+<p><code class="prettyprint">GET /api/projects/{project_id}/tasks/{task_id}/dtm/tiles.json</code></p>
+
+<p><code class="prettyprint">GET /api/projects/{project_id}/tasks/{task_id}/dtm/tiles/{Z}/{X}/{Y}.png</code></p>
+
+<h3 id="pending-actions">Pending Actions</h3>
+
+<p>In some circumstances, a <a href="#task">Task</a> can have a pending action that requires some amount of time to be performed.</p>
+
+<table><thead>
+<tr>
+<th>Pending Action</th>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>CANCEL</td>
+<td>1</td>
+<td><a href="#task">Task</a> is being canceled</td>
+</tr>
+<tr>
+<td>REMOVE</td>
+<td>2</td>
+<td><a href="#task">Task</a> is being removed</td>
+</tr>
+<tr>
+<td>RESTART</td>
+<td>3</td>
+<td><a href="#task">Task</a> is being restarted</td>
+</tr>
+</tbody></table>
+
+<h3 id="status-codes">Status Codes</h3>
+
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>QUEUED</td>
+<td>10</td>
+<td><a href="#task">Task</a>&rsquo;s files have been uploaded to a <a href="#processing-node">Processing Node</a> and are waiting to be processed.</td>
+</tr>
+<tr>
+<td>RUNNING</td>
+<td>20</td>
+<td><a href="#task">Task</a> is currently being processed.</td>
+</tr>
+<tr>
+<td>FAILED</td>
+<td>30</td>
+<td><a href="#task">Task</a> has failed for some reason (not enough images, out of memory, Piero forgot to close a parenthesis, etc.)</td>
+</tr>
+<tr>
+<td>COMPLETED</td>
+<td>40</td>
+<td><a href="#task">Task</a> has completed. Assets are be ready to be downloaded.</td>
+</tr>
+<tr>
+<td>CANCELED</td>
+<td>50</td>
+<td><a href="#task">Task</a> was manually canceled by the user.</td>
+</tr>
+</tbody></table>
+
+          <h2 id="processing-node">Processing Node</h2>
+
+<blockquote>
+<p>Example processing node:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"online"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"hostname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nodeodm.masseranolabs.com"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">80</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"api_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1.0.1"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"engine_version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"0.6.0"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"engine"</span><span class="p">:</span><span class="w"> </span><span class="s2">"odm"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"last_refreshed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2017-03-01T21:14:49.918276Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"queue_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"max_images"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"label"</span><span class="p">:</span><span class="w"> </span><span class="s2">"nodeodm.masseranolabs.com:80"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"available_options"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"help"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Oct-tree depth at which the Laplacian equation is solved in the surface reconstruction step. Increasing this value increases computation times slightly but helps reduce memory usage. Default: 9"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mesh-solver-divide"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"int"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"domain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"positive integer"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+    </span><span class="err">...</span><span class="w">
+</span></code></pre></div>
+<p>Processing nodes are associated with zero or more tasks and
+take care of processing input images. Processing nodes are computers or virtual machines running <a href="https://github.com/OpenDroneMap/NodeODM">NodeODM</a> or any other API compatible with it.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>int</td>
+<td>Unique Identifier</td>
+</tr>
+<tr>
+<td>online</td>
+<td>bool</td>
+<td>Whether the processing node could be reached in the last 5 minutes</td>
+</tr>
+<tr>
+<td>hostname</td>
+<td>string</td>
+<td>Hostname/IP address</td>
+</tr>
+<tr>
+<td>port</td>
+<td>int</td>
+<td>Port</td>
+</tr>
+<tr>
+<td>api_version</td>
+<td>string</td>
+<td>Version of NodeODM currently running</td>
+</tr>
+<tr>
+<td>engine_version</td>
+<td>string</td>
+<td>Version of processing engine currently being used</td>
+</tr>
+<tr>
+<td>engine</td>
+<td>string</td>
+<td>Lowercase identifier of processing engine</td>
+</tr>
+<tr>
+<td>last_refreshed</td>
+<td>string</td>
+<td>Date and time this node was last seen online. This value is typically refreshed every 15-30 seconds and is used to decide whether a node is offline or not</td>
+</tr>
+<tr>
+<td>queue_count</td>
+<td>int</td>
+<td>Number of <a href="#task">Task</a> items currently being processed/queued on this node.</td>
+</tr>
+<tr>
+<td>max_images</td>
+<td>int</td>
+<td>Optional maximum number of images this processing node can accept. null indicates no limit.</td>
+</tr>
+<tr>
+<td>label</td>
+<td>string</td>
+<td>Label for the node</td>
+</tr>
+<tr>
+<td>available_options</td>
+<td>JSON[]</td>
+<td>JSON-encoded list of options that this node is capable of handling. See <a href="#available-options">Available Options</a> for more information</td>
+</tr>
+</tbody></table>
+
+<h4 id="available-options">Available Options</h4>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>help</td>
+<td>Description of the option</td>
+</tr>
+<tr>
+<td>name</td>
+<td>Name that identifies the option. This is the value you pass in the <code class="prettyprint">name</code> key/value pair when creating a set of options for a new <a href="#task">Task</a></td>
+</tr>
+<tr>
+<td>type</td>
+<td>Possible values are <code class="prettyprint">int</code>, <code class="prettyprint">float</code>, <code class="prettyprint">string</code>, <code class="prettyprint">bool</code></td>
+</tr>
+<tr>
+<td>value</td>
+<td>Default value if the option is not specified</td>
+</tr>
+<tr>
+<td>domain</td>
+<td>Restriction of the range of values that this option allows. Examples are <code class="prettyprint">float</code>, <code class="prettyprint">negative integer</code>, <code class="prettyprint">percent</code>, <code class="prettyprint">float: 0 &lt;= x &lt;= 10</code>, etc. for all possible values, check <a href="https://github.com/OpenDroneMap/NodeODM/blob/master/libs/odmOptions.js#L135">NodeODM&rsquo;s odmOptions.js code</a></td>
+</tr>
+</tbody></table>
+
+<h3 id="add-a-processing-node">Add a processing node</h3>
+
+<p><code class="prettyprint">POST /api/processingnodes/</code></p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>hostname</td>
+<td>*</td>
+<td>&ldquo;&rdquo;</td>
+<td>Hostname/IP address</td>
+</tr>
+<tr>
+<td>port</td>
+<td>*</td>
+<td></td>
+<td>Port</td>
+</tr>
+</tbody></table>
+
+<p>All other fields are automatically populated, and shouldn&rsquo;t generally be specified.</p>
+
+<h3 id="update-a-processing-node">Update a processing node</h3>
+
+<p><code class="prettyprint">PATCH /api/processingnodes/</code></p>
+
+<p>Parameters are the same as above.</p>
+
+<h3 id="delete-a-processing-node">Delete a processing node</h3>
+
+<p><code class="prettyprint">DELETE /api/processingnodes/</code></p>
+
+<p>Upon deletion, all <a href="#task">Task</a> items associated with the node will continue to exist. You might get errors (duh!) if you delete a processing node in the middle of processing a <a href="#task">Task</a>.</p>
+
+<h3 id="get-list-of-processing-nodes">Get list of processing nodes</h3>
+
+<p><code class="prettyprint">GET /api/processingnodes/</code></p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by id</td>
+</tr>
+<tr>
+<td>hostname</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by hostname</td>
+</tr>
+<tr>
+<td>port</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by port</td>
+</tr>
+<tr>
+<td>api_version</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by API version</td>
+</tr>
+<tr>
+<td>queue_count</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by queue count</td>
+</tr>
+<tr>
+<td>max_images</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by max images</td>
+</tr>
+<tr>
+<td>engine_version</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by engine version</td>
+</tr>
+<tr>
+<td>engine</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Filter by engine identifier</td>
+</tr>
+<tr>
+<td>ordering</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Ordering field to sort results by</td>
+</tr>
+<tr>
+<td>has_available_options</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Return only processing nodes that have a valid set of processing options (check that the <code class="prettyprint">available_options</code> field is populated). Either <code class="prettyprint">true</code> or <code class="prettyprint">false</code>.</td>
+</tr>
+</tbody></table>
+
+<h4 id="example-show-only-nodes-that-have-a-valid-set-of-options">Example: Show only nodes that have a valid set of options</h4>
+
+<p><code class="prettyprint">GET /api/processingnodes/?has_available_options=true</code></p>
+
+<h4 id="example-sorting">Example: Sorting</h4>
+
+<p><code class="prettyprint">GET /api/processingnodes/?ordering=-hostname</code></p>
+
+<p>Sort by hostname, descending order.</p>
+
+<aside class="notice">Only processing nodes visible to the current user are returned. If you added a processing node, but your non-admin users can&rsquo;t see it, make sure that they have been assigned the proper permissions. Administration &ndash; Processing Nodes &ndash; Select Node &ndash; Object Permissions &ndash; Add User/Group and check CAN VIEW PROCESSING NODE.</aside>
+
+<h3 id="processing-options">Processing Options</h3>
+
+<blockquote>
+<p>Processing options example:</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json"><code><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"help"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Oct-tree depth at which the Laplacian equation is solved in the surface reconstruction step. Increasing this value increases computation times slightly but helps reduce memory usage. Default: 9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mesh-solver-divide"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"int"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"9"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"domain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"positive integer"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"help"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Ignore matched keypoints if the two images share less than &lt;float&gt; percent of keypoints. Default: 2"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"matcher-threshold"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"float"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"domain"</span><span class="p">:</span><span class="w"> </span><span class="s2">"percent"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="err">...</span><span class="w">
+</span></code></pre></div>
+<p><code class="prettyprint">GET /api/processingnodes/options/</code></p>
+
+<p>Display the common options available among all online processing nodes. This is calculated by intersecting the <code class="prettyprint">available_options</code> field of all online processing nodes visible to the current user.</p>
+
+<p>Use this list of options to check whether a particular option is supported by all online processing nodes. If you use the automatic processing node assignment feature for processing tasks, this is the list you want to display to the user for choosing the options to use during processing.</p>
+
+<aside class="notice">While WebODM is capable of handling processing nodes running different versions of NodeODM, we don&rsquo;t recommend doing so. When all processing nodes use the same NodeODM version, the output of this API call will be identical to the <b>available_options</b> field of any node.</aside>
+
+          <h2 id="permissions">Permissions</h2>
+
+<p>WebODM comes with a standard <code class="prettyprint">model level</code> permission system. You can
+check whether users are logged-in and have privileges to act on things
+model-wise (can a user add a project? can a user view projects?).</p>
+
+<p>On top of that, WebODM features a powerful <code class="prettyprint">row level</code> permission system. You can specify exactly which things a user has or has not access to, delete, change, etc.</p>
+
+<p>Changes to the permissions of objects can be handled via the <code class="prettyprint">Administration</code> page of WebODM. </p>
+
+<p>We are planning to make it easier for users and developers to handle permissions via an API. This is a work in progress.</p>
+
+<h3 id="permission-values">Permission Values</h3>
+
+<table><thead>
+<tr>
+<th>Permission</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>delete</td>
+<td>The object can be deleted</td>
+</tr>
+<tr>
+<td>change</td>
+<td>The object can be edited</td>
+</tr>
+<tr>
+<td>add</td>
+<td>A related object can be added to the object (a task can be added to the project)</td>
+</tr>
+<tr>
+<td>view</td>
+<td>The object can be viewed (read-only)</td>
+</tr>
+</tbody></table>
+
+          <h2 id="admin-users">Admin/Users</h2>
+
+<blockquote>
+<p>Example User</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"password"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pbkdf2_sha256$120000$vkzUnKJwwaNl$95nqgBjqZ3/8Plk5soe2SjUPEF5fFNjBDfIapOXCy/Y="</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"last_login"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-09-12T01:45:05Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"is_superuser"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"username"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"first_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"last_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin@example.com"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"is_staff"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"is_active"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"date_joined"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-09-12T01:44:18Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"groups"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="mi">1</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="nl">"user_permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="mi">9</span><span class="p">,</span><span class="w">
+        </span><span class="mi">10</span><span class="p">,</span><span class="w">
+        </span><span class="mi">11</span><span class="p">,</span><span class="w">
+        </span><span class="mi">12</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This API can only be used by admin users.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>int</td>
+<td>Unique identifier</td>
+</tr>
+<tr>
+<td>password</td>
+<td>string</td>
+<td>Password</td>
+</tr>
+<tr>
+<td>last_login</td>
+<td>string</td>
+<td>Last login date and time</td>
+</tr>
+<tr>
+<td>is_superuser</td>
+<td>bool</td>
+<td>If user is superuser then true</td>
+</tr>
+<tr>
+<td>username</td>
+<td>string</td>
+<td>User name</td>
+</tr>
+<tr>
+<td>first_name</td>
+<td>string</td>
+<td>User first name</td>
+</tr>
+<tr>
+<td>last_name</td>
+<td>string</td>
+<td>User last name</td>
+</tr>
+<tr>
+<td>email</td>
+<td>string</td>
+<td>User email</td>
+</tr>
+<tr>
+<td>is_staff</td>
+<td>bool</td>
+<td>If user is staff then true</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td>bool</td>
+<td>If user is active then true</td>
+</tr>
+<tr>
+<td>date_joined</td>
+<td>string</td>
+<td>Join date and time</td>
+</tr>
+<tr>
+<td>groups</td>
+<td>int[]</td>
+<td>List of groups to which the user belongs</td>
+</tr>
+<tr>
+<td>user_permissions</td>
+<td>int[]</td>
+<td>List of permissions to which the user has</td>
+</tr>
+</tbody></table>
+
+<h3 id="create-a-user">Create a user</h3>
+
+<p><code class="prettyprint">POST /api/admin/users/</code></p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>password</td>
+<td>*</td>
+<td>&ldquo;&rdquo;</td>
+<td>Password</td>
+</tr>
+<tr>
+<td>is_superuser</td>
+<td></td>
+<td>false</td>
+<td>If user is superuser then true</td>
+</tr>
+<tr>
+<td>username</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>User name</td>
+</tr>
+<tr>
+<td>first_name</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>User first name</td>
+</tr>
+<tr>
+<td>last_name</td>
+<td>*</td>
+<td>&ldquo;&rdquo;</td>
+<td>User last name</td>
+</tr>
+<tr>
+<td>email</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>User email</td>
+</tr>
+<tr>
+<td>is_staff</td>
+<td></td>
+<td>false</td>
+<td>If user is staff then true</td>
+</tr>
+<tr>
+<td>is_active</td>
+<td></td>
+<td>false</td>
+<td>If user is active then true</td>
+</tr>
+<tr>
+<td>groups</td>
+<td>int[]</td>
+<td>[]</td>
+<td>List of groups to which the user belongs</td>
+</tr>
+<tr>
+<td>user_permissions</td>
+<td>int[]</td>
+<td>[]</td>
+<td>List of permissions to which the user has</td>
+</tr>
+</tbody></table>
+
+<h3 id="update-a-user">Update a user</h3>
+
+<p><code class="prettyprint">PUT /api/admin/users/{id}/</code></p>
+
+<p>Parameters are the same as above.</p>
+
+<h3 id="delete-a-user">Delete a user</h3>
+
+<p><code class="prettyprint">DELETE /api/admin/users/{id}/</code></p>
+
+<h3 id="get-a-user">Get a user</h3>
+
+<p><code class="prettyprint">GET /api/admin/users/{id}/</code></p>
+
+<h3 id="get-list-of-users">Get list of users</h3>
+
+<p><code class="prettyprint">GET /api/admin/users/</code></p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>email</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>User email</td>
+</tr>
+</tbody></table>
+
+<h4 id="example-filtering-by-email">Example: Filtering by email</h4>
+
+<p><code class="prettyprint">GET /api/admin/users/?email=user@example.com</code></p>
+
+<p>Retrieves projects that have a email of &ldquo;user@example.com&rdquo;.</p>
+
+<h2 id="admin-groups">Admin/Groups</h2>
+
+<blockquote>
+<p>Example Group</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Xyz"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="mi">53</span><span class="p">,</span><span class="w">
+        </span><span class="mi">54</span><span class="p">,</span><span class="w">
+        </span><span class="mi">55</span><span class="p">,</span><span class="w">
+        </span><span class="mi">56</span><span class="p">,</span><span class="w">
+        </span><span class="mi">37</span><span class="p">,</span><span class="w">
+        </span><span class="mi">38</span><span class="p">,</span><span class="w">
+        </span><span class="mi">39</span><span class="p">,</span><span class="w">
+        </span><span class="mi">40</span><span class="p">,</span><span class="w">
+        </span><span class="mi">49</span><span class="p">,</span><span class="w">
+        </span><span class="mi">50</span><span class="p">,</span><span class="w">
+        </span><span class="mi">51</span><span class="p">,</span><span class="w">
+        </span><span class="mi">52</span><span class="p">,</span><span class="w">
+        </span><span class="mi">76</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<p>This API can only be used by admin users.</p>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>id</td>
+<td>int</td>
+<td>Unique identifier</td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>Group name</td>
+</tr>
+<tr>
+<td>permissions</td>
+<td>int[]</td>
+<td>List of permissions to which the group belongs</td>
+</tr>
+</tbody></table>
+
+<h3 id="create-a-group">Create a group</h3>
+
+<p><code class="prettyprint">POST /api/admin/groups/</code></p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td>*</td>
+<td>&ldquo;&rdquo;</td>
+<td>Group name</td>
+</tr>
+<tr>
+<td>permissions</td>
+<td>int[]</td>
+<td>[]</td>
+<td>List of permissions to which the group belongs</td>
+</tr>
+</tbody></table>
+
+<h3 id="update-a-group">Update a group</h3>
+
+<p><code class="prettyprint">PUT /api/admin/groups/{id}/</code></p>
+
+<p>Parameters are the same as above.</p>
+
+<h3 id="delete-a-group">Delete a group</h3>
+
+<p><code class="prettyprint">DELETE /api/admin/groups/{id}/</code></p>
+
+<h3 id="get-a-group">Get a group</h3>
+
+<p><code class="prettyprint">GET /api/admin/groups/{id}/</code></p>
+
+<h3 id="get-list-of-group">Get list of group</h3>
+
+<p><code class="prettyprint">GET /api/admin/groups/</code></p>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>name</td>
+<td></td>
+<td>&ldquo;&rdquo;</td>
+<td>Group name</td>
+</tr>
+</tbody></table>
+
+<h4 id="example-filtering-by-email">Example: Filtering by email</h4>
+
+<p><code class="prettyprint">GET /api/admin/groups/?name=Xyz</code></p>
+
+<p>Retrieves projects that have a name of &ldquo;Xyz&rdquo;.</p>
+
+          <h2 id="handling-errors">Handling Errors</h2>
+
+<p>All API calls use the status codes as described in the <a href="http://www.django-rest-framework.org/api-guide/status-codes/">Django REST Framework&rsquo;s Status Code Guide</a>, but generally you only need to check for success status codes (<code class="prettyprint">200</code> or <code class="prettyprint">204</code>), handle the special case of <a href="#token-expiration">Token Expiration</a> (<code class="prettyprint">403</code>) and report an error otherwise.</p>
+
+<h3 id="error-status-codes">Error Status Codes</h3>
+
+<p>This is not an exhaustive list, but common error codes are listed below. </p>
+
+<table><thead>
+<tr>
+<th>Status Code</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>401</td>
+<td>Unauthenticated</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden (token expired?)</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Malformed request</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not found</td>
+</tr>
+</tbody></table>
+
+<p>For security reasons, sometimes an operation which should return <code class="prettyprint">403</code> returns <code class="prettyprint">404</code> to avoid disclosing IDs and other information to attackers.</p>
+
+          <h1 id="for-developers">For Developers</h1>
+
+<h2 id="development-quickstart">Development Quickstart</h2>
+
+<ol>
+<li>Make a fork of the <a href="https://github.com/OpenDroneMap/WebODM/">WebODM repository</a></li>
+<li>Clone your repository in a directory</li>
+<li>Create a new branch: <code class="prettyprint">git checkout -b branchname</code>.</li>
+<li><a href="#setup-a-development-environment">Setup a development environment</a> either with <a href="#docker-setup">docker</a> or <a href="#native-setup">natively</a>.</li>
+<li>Commit the changes: <code class="prettyprint">git commit -a -m &quot;describe your changes&quot;</code></li>
+<li>Push the changes to your repository: <code class="prettyprint">git push origin branchname</code></li>
+<li>Create a <a href="https://github.com/OpenDroneMap/WebODM/compare">pull request</a> </li>
+</ol>
+
+<p>We don&rsquo;t have many rules. Follow the guidelines indicated in the <a href="https://github.com/OpenDroneMap/WebODM/blob/master/CONTRIBUTING.md">Contributing</a> document, be nice to others and you&rsquo;ll do great! :)</p>
+
+<h2 id="setup-a-development-environment">Setup a Development Environment</h2>
+
+<p>There are two ways to setup a development environment. The easiest one is to use <a href="#docker-setup">docker</a>.</p>
+
+<p>Once you have a development environment, read about the <a href="#project-overview">project overview</a> and get hacking!</p>
+
+<h3 id="docker-setup">Docker Setup</h3>
+
+<p>Follow the <a href="https://github.com/OpenDroneMap/WebODM#getting-started">Getting Started</a> instructions, then run:</p>
+
+<p><code class="prettyprint">./webodm.sh start --dev</code></p>
+
+<p>That&rsquo;s it! You can modify any of the files, including SASS and React.js files. Changes will be reflected in the running WebODM instance automatically. </p>
+
+<h3 id="native-setup">Native Setup</h3>
+
+<p>If you can follow the instructions to <a href="https://github.com/OpenDroneMap/WebODM#run-it-natively">run WebODM natively</a>, you should be able to make changes to the code directly.</p>
+
+<h2 id="run-unit-tests">Run Unit Tests</h2>
+
+<p>We think testing is a necessary part of delivering robust software. We try to achieve complete test coverage for backend code and at a minimum robust smoke testing for frontend code.</p>
+
+<p>To run the unit tests, simply type:</p>
+
+<p><code class="prettyprint">./webodm.sh test</code></p>
+
+<h2 id="apply-changes-in-production">Apply Changes In Production</h2>
+
+<p>Once you&rsquo;re done making changes, if you start WebODM in production mode (without the <code class="prettyprint">--dev</code> flag), you will notice that your changes are missing. This is because <code class="prettyprint">webodm.sh</code> uses the <code class="prettyprint">opendronemap/webodm_webapp</code> docker image to launch WebODM, which doesn&rsquo;t have your changes. To apply the changes, you need to rebuild the docker image locally:</p>
+
+<p><code class="prettyprint">docker build -t opendronemap/webodm_webapp .</code></p>
+
+<p>You can also modify the <code class="prettyprint">docker-compose.yml</code> file to point to a different image.</p>
+
+<h2 id="project-overview">Project Overview</h2>
+
+<h3 id="backend">Backend</h3>
+
+<p>The backend is based mainly on <a href="https://www.djangoproject.com/">Django</a> and <a href="http://www.django-rest-framework.org/">Django REST Framework</a>.</p>
+
+<p>We don&rsquo;t use much of Django&rsquo;s templating system, except for the <code class="prettyprint">Administration</code> and <code class="prettyprint">Processing Nodes</code> sections. Instead we use Django to expose an <a href="#reference">API</a>, which we then tie to a <a href="https://facebook.github.io/react/">React.js</a> app.</p>
+
+<p>Directories of interest are listed as follow:</p>
+
+<table><thead>
+<tr>
+<th>Directory</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">/app</code></td>
+<td>Main application, includes the UI components, API, tests and backend logic.</td>
+</tr>
+<tr>
+<td><code class="prettyprint">/nodeodm</code></td>
+<td>Application that bridges the communication between WebODM and <a href="https://github.com/OpenDroneMap/NodeODM">NodeODM</a>. Includes its own unit tests and models.</td>
+</tr>
+<tr>
+<td><code class="prettyprint">/webodm</code></td>
+<td>Django&rsquo;s main project directory. Setting files are here.</td>
+</tr>
+</tbody></table>
+
+<h3 id="frontend">Frontend</h3>
+
+<p>We use a <a href="https://facebook.github.io/react/">React.js</a> app (<a href="https://leanpub.com/understandinges6/read/">ES6</a> syntax) and <a href="http://sass-lang.com/">SCSS</a> for various UI components such as the dashboard. We use <a href="https://webpack.github.io/">webpack</a> to build intermediate components into a static bundle.</p>
+
+<p>Directories of interest are listed as follow:</p>
+
+<table><thead>
+<tr>
+<th>Directory</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code class="prettyprint">/app/templates/app</code></td>
+<td>Location of Django templates. While we don&rsquo;t use them a lot, we use them for a few pages and as a glue to bootstrap the React code.</td>
+</tr>
+<tr>
+<td><code class="prettyprint">/app/static/app/js</code></td>
+<td>Location of Javascript files for all UI components.</td>
+</tr>
+<tr>
+<td><code class="prettyprint">/app/static/app/js/components</code></td>
+<td>We try to separate components for reusability into various React components. Each component is stored here.</td>
+</tr>
+<tr>
+<td><code class="prettyprint">/app/static/app/js/css</code></td>
+<td>Each component should have its own SCSS file. Those files are stored here.</td>
+</tr>
+</tbody></table>
+
+<p><code class="prettyprint">/app/static/app/js/main.jsx</code> is the entry point for the UI. If you wonder how we tie Django and React.js together, this is the file to look at to begin your search.</p>
+
+<h3 id="documentation">Documentation</h3>
+
+<p>We use <a href="https://github.com/lord/slate">Slate</a> to generate our documentation. See their project&rsquo;s <a href="https://github.com/lord/slate/wiki">wiki</a> for information about making changes to the documentation.</p>
+
+<p>Documentation can be changed by modifying the files in <code class="prettyprint">/slate/source/includes</code>.</p>
+
+      </div>
+      <div class="dark-box">
+          <div class="lang-selector">
+                <a href="#" data-language-name="code">code</a>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>
