@@ -74,7 +74,7 @@ var messages = {
     footer_title_contact: "Contact",
     footer_menu_home: "Home",
     footer_company: "MAPEDIA Co., Ltd.",
-    footer_address: "3th Mahadhammaraja Building, Room TB-314, Naresuan University, Phitsanulok, Thailand 66000"
+    footer_address: "3th Mahadhammaraja Building, Room TB-307-308, Naresuan University, Phitsanulok, Thailand 66000"
   },
   th: {
     nav_menu_doc: "เอกสาร",
@@ -148,11 +148,11 @@ var messages = {
         " บริษัท แมพพิเดีย จำกัด ก่อตั้งขึ้นจากทีมงานผู้เชี่ยวชาญด้านระบบสารสนเทศภูมิศาสตร์หรือ GIS ที่มากด้วยประสบการณ์การพัฒนางานด้าน GIS ให้ทั้งภาครัฐและเอกชน",
       readme: "อ่านเพิ่มเติม",
     },
-    footer_title_link: "ลิ้งค์",
+    footer_title_link: "ลิงค์",
     footer_title_contact: "ติดต่อ",
     footer_menu_home: "หน้าหลัก",
     footer_company: "บริษัท แมพพิเดีย จำกัด",
-    footer_address: "เลขที่ 99 หมู่ 9 อาคารมหาธรรมราชา ตึก B ชั้น 3 ห้อง TB 314 มหาวิทยาลัยนเรศวร ตำบลท่าโพธิ์ อำเภอเมือง จังหวัดพิษณุโลก 65000",
+    footer_address: "เลขที่ 99 หมู่ 9 อาคารมหาธรรมราชา ตึก B ชั้น 3 ห้อง TB-307-308 มหาวิทยาลัยนเรศวร ตำบลท่าโพธิ์ อำเภอเมือง จังหวัดพิษณุโลก 65000",
   },
 };
 // Create VueI18n instance with options
