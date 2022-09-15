@@ -46,7 +46,7 @@ var messages = {
       price1_title: "Starter Plan",
       price1_value: "Free",
       price1_desc:
-        "- Unlimited project creation<br/>- Upload up to 300 images/project<br/>- Support Ground Control Point (GCP) files<br/>- Unlimited processing tasks (shared server)<br/>- Able to download data for use with GIS programs",
+        "- Unlimited project creation<br/>- Upload up to 100 images/project<br/>- Support Ground Control Point (GCP) files<br/>- Unlimited processing tasks (shared server)<br/>- Able to download data for use with GIS programs",
       price2_title: "Professional Plan",
       price2_value: "Contact Us",
       price2_desc:
@@ -124,7 +124,7 @@ var messages = {
       price1_title: "แพคเกจเริ่มต้น",
       price1_value: "ทดลองใช้งานฟรี",
       price1_desc:
-        "- ไม่จำกัดการสร้างโปรเจ็ค <br/>- อัปโหลดภาพไม่เกิน 300 ภาพ/โปรเจ็ค <br/>- รองรับไฟล์ Ground Control Point (GCP) <br/>- ไม่จำกัด Task ในการประมวลผล (shared server) <br/>- สามารถดาวน์โหลดข้อมูลเพื่อใช้ร่วมกับโปรแกรมด้าน GIS ได้",
+        "- ไม่จำกัดการสร้างโปรเจ็ค <br/>- อัปโหลดภาพไม่เกิน 100 ภาพ/โปรเจ็ค <br/>- รองรับไฟล์ Ground Control Point (GCP) <br/>- ไม่จำกัด Task ในการประมวลผล (shared server) <br/>- สามารถดาวน์โหลดข้อมูลเพื่อใช้ร่วมกับโปรแกรมด้าน GIS ได้",
       price2_title: "แพคเกจสำหรับมืออาชีพ",
       price2_value: "ติดต่อเรา",
       price2_desc:
