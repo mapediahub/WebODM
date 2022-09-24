@@ -119,7 +119,7 @@ var messages = {
       exam_header: "ตัวอย่างแผนที่",
       exam_desc:
         "ตัวอย่างชุดข้อมูลของการทำ Drone mapping ที่แสดงผลเป็น Orthophoto, Plant Health, Surface Model และแผนที่รูปแบบ 3 มิติ",
-      exam_btn: "ลองเลย",
+      exam_btn: "คลิกดู ภาพตัวอย่าง",
       price_header: "แพคเกจราคา",
       price1_title: "แพคเกจเริ่มต้น",
       price1_value: "ทดลองใช้งานฟรี",
